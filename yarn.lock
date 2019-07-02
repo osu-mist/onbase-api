@@ -2868,6 +2868,11 @@ optionator@^0.8.2:
     type-check "~0.3.2"
     wordwrap "~1.0.0"
 
+oracledb@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/oracledb/-/oracledb-3.1.2.tgz#4d7df7b8eda161d4e645837cd43c530232d139e8"
+  integrity sha512-DOBKpUlfvGAX6bcpuPGtPVVfOOUqFue8eLjbnnmkDyBTU+YuH+gXHRy4ftlFzkHBXYkrSGenFJrXy8dDfEVXCg==
+
 ordered-read-streams@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/ordered-read-streams/-/ordered-read-streams-1.0.1.tgz#77c0cb37c41525d64166d990ffad7ec6a0e1363e"
