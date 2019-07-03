@@ -10,21 +10,23 @@ const applicationResourceProp = openapi.definitions.ApplicationResource.properti
 const applicationResourceType = applicationResourceProp.type.enum[0];
 const applicationResourceKeys = _.keys(applicationResourceProp.attributes.properties);
 const applicationResourcePath = 'applications';
-const applicationResourceUrl = resourcePathLink(apiBaseUrl, applicationResourcePath);
+const onBaseUrl = resourcePathLink(apiBaseUrl, 'onbase');
 
 /**
  * @summary A function to serialize raw applications data
  * @function
  * @param {Object[]} rawApplications Raw applications data rows from data source
+ * @param {String} osuId OSU ID
  * @returns {Object} Serialized application resources data
  */
-const serializeApplications = (rawApplications) => {
-  const topLevelSelfLink = applicationResourceUrl;
+const serializeApplications = (rawApplications, osuId) => {
+  const baseUrl = resourcePathLink(onBaseUrl, osuId);
+  const topLevelSelfLink = resourcePathLink(baseUrl, applicationResourcePath);
 
   const serializerArgs = {
     identifierField: 'applicationId',
     resourceKeys: applicationResourceKeys,
-    resourcePath: applicationResourcePath,
+    resourceUrl: resourcePathLink(baseUrl, applicationResourcePath),
     topLevelSelfLink,
     enableDataLinks: true,
     resourceType: applicationResourceType,
@@ -43,7 +45,7 @@ const serializeApplications = (rawApplications) => {
  * @returns {Object} Serialized application resource data
  */
 const serializeApplication = (rawApplication) => {
-  const topLevelSelfLink = resourcePathLink(applicationResourceUrl, 'applicationId');
+  const topLevelSelfLink = resourcePathLink(onBaseUrl, 'applicationId');
   const serializerArgs = {
     identifierField: 'applicationId',
     resourceKeys: applicationResourceKeys,

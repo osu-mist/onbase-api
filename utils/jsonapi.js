@@ -1,7 +1,7 @@
 const appRoot = require('app-root-path');
 const _ = require('lodash');
 
-const { apiBaseUrl, resourcePathLink, paramsLink } = appRoot.require('utils/uri-builder');
+const { resourcePathLink, paramsLink } = appRoot.require('utils/uri-builder');
 
 
 /**
@@ -26,14 +26,13 @@ const serializerOptions = (serializerArgs) => {
     identifierField,
     resourceKeys,
     pagination,
-    resourcePath,
+    resourceUrl,
     topLevelSelfLink,
     query,
     keyForAttribute,
     enableDataLinks,
   } = serializerArgs;
 
-  const resourceUrl = resourcePathLink(apiBaseUrl, resourcePath);
   const options = {
     pluralizeType: false,
     attributes: resourceKeys,

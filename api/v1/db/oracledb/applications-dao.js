@@ -1,5 +1,4 @@
 const appRoot = require('app-root-path');
-const config = require('config');
 const _ = require('lodash');
 const { BIND_OUT, NUMBER, STRING } = require('oracledb');
 
@@ -11,7 +10,6 @@ const {
 const conn = appRoot.require('api/v1/db/oracledb/connection');
 const { contrib } = appRoot.require('api/v1/db/oracledb/contrib/contrib');
 
-const { endpointUri } = config.get('server');
 
 /**
  * @summary A Helper recursive function to read buffer
@@ -68,7 +66,7 @@ const getApplications = async (osuId) => {
       });
     });
 
-    const serializedPets = serializeApplications(rawApplications, endpointUri);
+    const serializedPets = serializeApplications(rawApplications, osuId);
     return serializedPets;
   } finally {
     connection.close();
