@@ -18,18 +18,18 @@ const { contrib } = appRoot.require('api/v1/db/oracledb/contrib/contrib');
  */
 const getLine = async (connection, lines) => {
   try {
-    const result = await connection.execute(
+    const { outBinds } = await connection.execute(
       contrib.getLine(),
       {
-        ln: { dir: BIND_OUT, type: STRING, maxSize: 32767 },
-        st: { dir: BIND_OUT, type: NUMBER },
+        line: { dir: BIND_OUT, type: STRING, maxSize: 32767 },
+        status: { dir: BIND_OUT, type: NUMBER },
       },
     );
-    if (result.outBinds.ln) {
-      lines.push(result.outBinds.ln);
+    if (outBinds.line) {
+      lines.push(outBinds.line);
     }
     // The status code will be equal to 1 if there is no more output
-    if (result.outBinds.st !== 1) {
+    if (outBinds.status !== 1) {
       ({ connection, lines } = await getLine(connection, lines));
     }
     return { connection, lines };
