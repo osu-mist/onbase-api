@@ -127,10 +127,10 @@ definitions:
             type: string
             description: Term code
             example: '201901'
-          numbers:
-            type: integer
-            description: Application numbers
-            example: 3
+          number:
+            type: string
+            description: Application number
+            example: '3'
           decisionCode:
             type: string
             description: Application decision code

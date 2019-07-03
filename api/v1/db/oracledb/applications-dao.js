@@ -54,10 +54,10 @@ const getApplications = async (osuId) => {
     _.forEach(lines, (line) => {
       const array = _.split(line, ',');
       rawApplications.push({
-        applicationId: `${array[0]}-${array[1]}`,
+        applicationId: `${array[0]}-${array[1]}-${array[2]}`,
         osuId: array[0],
         termCode: array[1],
-        numbers: array[2],
+        number: array[2],
         decisionCode: array[3],
         levelCode: array[4],
         campusCode: array[5],
