@@ -13,6 +13,11 @@ const { contrib } = appRoot.require('api/v1/db/oracledb/contrib/contrib');
 
 const { endpointUri } = config.get('server');
 
+/**
+ * @summary A Helper recursive function to read buffer
+ * @function
+ * @returns {Promise<String[]>} Promise object represents a list of records
+ */
 const getLine = async (connection, lines) => {
   try {
     const result = await connection.execute(
@@ -25,7 +30,7 @@ const getLine = async (connection, lines) => {
     if (result.outBinds.ln) {
       lines.push(result.outBinds.ln);
     }
-
+    // The status code will be equal to 1 if there is no more output
     if (result.outBinds.st !== 1) {
       ({ connection, lines } = await getLine(connection, lines));
     }
@@ -62,11 +67,6 @@ const getApplications = async (osuId) => {
         admitCode: array[7],
       });
     });
-
-    console.log(rawApplications);
-
-
-    // const { rawApplications } = lines;
 
     const serializedPets = serializeApplications(rawApplications, endpointUri);
     return serializedPets;
