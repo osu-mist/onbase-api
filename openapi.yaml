@@ -166,7 +166,7 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/ApplicationResource'
-  ErrorResource:
+  ErrorObject:
     properties:
       status:
         type: string
@@ -195,4 +195,4 @@ definitions:
       errors:
         type: array
         items:
-          $ref: '#/definitions/ErrorResource'
+          $ref: '#/definitions/ErrorObject'
