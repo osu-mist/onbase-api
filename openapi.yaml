@@ -92,17 +92,26 @@ parameters:
     schema:
       type: object
       properties:
-        onbaseDocumentType:
+        id:
           type: string
-          description: OnBase document type
-        additionalChecklistInfo:
+          description: OSU ID of a person
+          pattern: '^\d{9}$'
+        type:
           type: string
-          description: Additional checklist information
-        documentReceiveDate:
-          type: string
-          description: The document receive date in Oracle date format (DD-MON-YYYY HH24:MI:SS)
-          example: '20-MAY-19 00:00:00'
-      additionalProperties: false
+          enum: [onBase]
+        attributes:
+          properties:
+            onbaseDocumentType:
+              type: string
+              description: OnBase document type
+            additionalChecklistInfo:
+              type: string
+              description: Additional checklist information
+            documentReceiveDate:
+              type: string
+              description: The document receive date in Oracle date format (DD-MON-YYYY HH24:MI:SS)
+              example: '20-MAY-19 00:00:00'
+          additionalProperties: false
 definitions:
   SelfLink:
     properties:
@@ -172,7 +181,7 @@ definitions:
         pattern: '^\d{9}$'
       type:
         type: string
-        enum: ['onBase']
+        enum: [onBase]
       attributes:
         properties:
           applications:
