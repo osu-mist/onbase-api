@@ -59,7 +59,7 @@ paths:
         '200':
           description: Successful response
           schema:
-            $ref: '#/definitions/OnBAseResult'
+            $ref: '#/definitions/OnBaseResult'
         '400':
           description: Bad request
           schema:
