@@ -26,7 +26,7 @@ paths:
     get:
       summary: Return a recordset of application data for an OSU ID
       tags:
-        - applications
+        - onBase
       description: Return a recordset of application data for an OSU ID
       operationId: getApplications
       parameters:
@@ -48,7 +48,7 @@ paths:
     patch:
       summary: Update an existing application
       tags:
-        - applications
+        - onBase
       description: Update an existing application by application ID
       operationId: patchApplicationById
       parameters:
