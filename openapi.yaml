@@ -173,8 +173,6 @@ definitions:
       type:
         type: string
         enum: ['onBase']
-      links:
-        $ref: '#/definitions/SelfLink'
       attributes:
         properties:
           applications:
