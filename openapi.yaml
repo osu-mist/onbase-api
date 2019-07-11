@@ -36,7 +36,7 @@ paths:
         '200':
           description: Successful response
           schema:
-            $ref: '#/definitions/OnBAseResult'
+            $ref: '#/definitions/OnBaseResult'
         '404':
           description: OnBase record for an OSU ID not found
           schema:
@@ -181,7 +181,7 @@ definitions:
             type: array
             items:
               $ref: '#/definitions/Application'
-  OnBAseResult:
+  OnBaseResult:
     properties:
       links:
         allOf:
