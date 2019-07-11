@@ -20,7 +20,7 @@ externalDocs:
 produces:
   - application/json
 paths:
-  /onbase/{osuId}/applications:
+  /onbase/{osuId}:
     get:
       summary: Return a recordset of application data for an OSU ID
       tags:
@@ -34,12 +34,15 @@ paths:
         '200':
           description: Successful response
           schema:
-            $ref: '#/definitions/ApplicationsResult'
+            $ref: '#/definitions/ApplicationResult'
+        '404':
+          description: Applications for an OSU ID not found
+          schema:
+            $ref: '#/definitions/ErrorResult'
         '500':
           description: Internal server error
           schema:
             $ref: '#/definitions/ErrorResult'
-  /onbase/{osuId}/applications/{applicationId}:
     patch:
       summary: Update an existing application
       tags:
@@ -49,20 +52,7 @@ paths:
       parameters:
         - $ref: '#/parameters/authorization'
         - $ref: '#/parameters/osuId'
-        - $ref: '#/parameters/applicationId'
-        - in: body
-          name: requestBody
-          schema:
-            type: object
-            properties:
-              data:
-                properties:
-                  id:
-                    $ref: '#/definitions/ApplicationResource/properties/id'
-                  type:
-                    $ref: '#/definitions/ApplicationResource/properties/type'
-                  attributes:
-                    $ref: '#/definitions/ApplicationResource/properties/attributes'
+        - $ref: '#/parameters/processDocumentBody'
       responses:
         '200':
           description: Successful response
@@ -94,12 +84,25 @@ parameters:
     required: true
     description: OSU ID of a person
     pattern: '^\d{9}$'
-  applicationId:
-    name: applicationId
-    in: path
-    type: string
-    required: true
-    description: A unique ID of a application
+  processDocumentBody:
+    name: processDocumentBody
+    in: body
+    schema:
+      type: object
+      properties:
+        onbaseDocumentType:
+          type: string
+          description: OnBase document type
+        additionalChecklistInfo:
+          type: string
+          description: Additional checklist information
+        documentReceiveDate:
+          type: string
+          format: date-time
+          description: |
+            'The document receive date uses the date-time notation as defined by RFC 3339 in Pacific Time Zone: https://tools.ietf.org/html/rfc3339#section-5.6, section 5.6'
+          example: '2019-01-01T00:00:00+08:00'
+      additionalProperties: false
 definitions:
   SelfLink:
     properties:
@@ -109,63 +112,74 @@ definitions:
         description: Self-link of current resource
   ApplicationResource:
     properties:
-      id:
+      termCode:
         type: string
-        description: A unique ID of a application
-      type:
+        description: Term code
+        example: '201901'
+      applicationNumber:
         type: string
-        enum: [application]
-      links:
-        $ref: '#/definitions/SelfLink'
-      attributes:
-        properties:
-          osuId:
-            type: string
-            description: OSU ID of a person
-            example: '123456789'
-          termCode:
-            type: string
-            description: Term code
-            example: '201901'
-          number:
-            type: string
-            description: Application number
-            example: '3'
-          decisionCode:
-            type: string
-            description: Application decision code
-            example: 'AT'
-          levelCode:
-            type: string
-            description: Application level code
-            example: '02'
-          campusCode:
-            type: string
-            description: Campus code
-            example: 'DSC'
-          studentTypeCode:
-            type: string
-            description: Student type code
-            example: 'T'
-          admitCode:
-            type: string
-            description: Admit code
-            example: 'RA'
+        description: Application number
+        example: '3'
+      statusCode:
+        type: string
+        description: Status code
+        example: 'D'
+      statusDate:
+        type: string
+        description: |
+          'The status date uses the date-time notation as defined by RFC 3339 in Pacific Time Zone'
+        example: '2019-01-01T00:00:00+08:00'
+      decisionCode:
+        type: string
+        description: Application decision code
+        example: 'AT'
+      decisionDate:
+        type: string
+        format: date-time
+        description: |
+          'The decision date uses the date-time notation as defined by RFC 3339 in Pacific Time Zone'
+        example: '2019-01-01T00:00:00+08:00'
+      levelCode:
+        type: string
+        description: Application level code
+        example: '02'
+      campusCode:
+        type: string
+        description: Campus code
+        example: 'DSC'
+      studentTypeCode:
+        type: string
+        description: Student type code
+        example: 'T'
+      admitCode:
+        type: string
+        description: Admit code
+        example: 'RA'
+      initialCompleteDate:
+        type: string
+        format: date-time
+        description: |
+          'The initial complete date uses the date-time notation as defined by RFC 3339 in Pacific Time Zone'
+        example: '2019-01-01T00:00:00+08:00'
+      justCompletedInd:
+        type: boolean
+        description: The indicator shows if the application is just completed
+        example: true
+      uacPendingInd:
+        type: boolean
+        description: The indicator shows if the application is strill pending in University Admission Committee
+        example: true
   ApplicationResult:
-    properties:
-      links:
-        $ref: '#/definitions/SelfLink'
-      data:
-        $ref: '#/definitions/ApplicationResource'
-  ApplicationsResult:
     properties:
       links:
         allOf:
           - $ref: '#/definitions/SelfLink'
       data:
-        type: array
-        items:
-          $ref: '#/definitions/ApplicationResource'
+        properties:
+          applications:
+            type: array
+            items:
+              $ref: '#/definitions/ApplicationResource'
   ErrorObject:
     properties:
       status:
