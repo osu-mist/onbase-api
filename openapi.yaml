@@ -188,11 +188,12 @@ definitions:
             type: array
             items:
               $ref: '#/definitions/Application'
+      links:
+        $ref: '#/definitions/SelfLink'
   OnBaseResult:
     properties:
       links:
-        allOf:
-          - $ref: '#/definitions/SelfLink'
+        $ref: '#/definitions/SelfLink'
       data:
         $ref: '#/definitions/OnBaseResource'
   ErrorObject:
