@@ -17,6 +17,8 @@ basePath: /v1
 externalDocs:
   description: GitHub Repository
   url: https://github.com/osu-mist/onbase-api
+consumes:
+  - application/json
 produces:
   - application/json
 paths:
@@ -34,9 +36,9 @@ paths:
         '200':
           description: Successful response
           schema:
-            $ref: '#/definitions/ApplicationResult'
+            $ref: '#/definitions/OnBAseResult'
         '404':
-          description: Applications for an OSU ID not found
+          description: OnBase record for an OSU ID not found
           schema:
             $ref: '#/definitions/ErrorResult'
         '500':
@@ -57,13 +59,13 @@ paths:
         '200':
           description: Successful response
           schema:
-            $ref: '#/definitions/ApplicationResult'
+            $ref: '#/definitions/OnBAseResult'
         '400':
           description: Bad request
           schema:
             $ref: '#/definitions/ErrorResult'
         '404':
-          description: Application not found
+          description: OnBase record for an OSU ID not found
           schema:
             $ref: '#/definitions/ErrorResult'
         '500':
@@ -98,7 +100,6 @@ parameters:
           description: Additional checklist information
         documentReceiveDate:
           type: string
-          format: date-time
           description: The document receive date in Oracle date format (DD-MON-YYYY HH24:MI:SS)
           example: '20-MAY-19 00:00:00'
       additionalProperties: false
@@ -109,7 +110,7 @@ definitions:
         type: string
         format: url
         description: Self-link of current resource
-  ApplicationResource:
+  Application:
     properties:
       termCode:
         type: string
@@ -133,7 +134,6 @@ definitions:
         example: 'AT'
       decisionDate:
         type: string
-        format: date-time
         description: The decision date in Oracle date format (DD-MON-YYYY HH24:MI:SS)
         example: '20-MAY-19 00:00:00'
       levelCode:
@@ -154,7 +154,6 @@ definitions:
         example: 'RA'
       initialCompleteDate:
         type: string
-        format: date-time
         description: The initial complete date in Oracle date format (DD-MON-YYYY HH24:MI:SS)
         example: '20-MAY-19 00:00:00'
       justCompletedInd:
@@ -165,17 +164,30 @@ definitions:
         type: boolean
         description: The indicator shows if the application is strill pending in University Admission Committee
         example: true
-  ApplicationResult:
+  OnBaseResource:
+    properties:
+      id:
+        type: string
+        description: OSU ID of a person
+        pattern: '^\d{9}$'
+      type:
+        type: string
+        enum: ['onBase']
+      links:
+        $ref: '#/definitions/SelfLink'
+      attributes:
+        properties:
+          applications:
+            type: array
+            items:
+              $ref: '#/definitions/Application'
+  OnBAseResult:
     properties:
       links:
         allOf:
           - $ref: '#/definitions/SelfLink'
       data:
-        properties:
-          applications:
-            type: array
-            items:
-              $ref: '#/definitions/ApplicationResource'
+        $ref: '#/definitions/OnBaseResource'
   ErrorObject:
     properties:
       status:
