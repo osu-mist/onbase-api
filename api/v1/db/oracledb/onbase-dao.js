@@ -1,4 +1,5 @@
 const appRoot = require('app-root-path');
+const createError = require('http-errors');
 const _ = require('lodash');
 const { BIND_OUT, NUMBER, STRING } = require('oracledb');
 
@@ -38,6 +39,7 @@ const getLine = async (connection, lines) => {
 /**
  * @summary Return an OnBase record of a person
  * @function
+ * @param {string} osuId OSU ID
  * @returns {Promise<Object[]>} Promise object represents an OnBase record
  */
 const getOnBase = async (osuId) => {
@@ -55,29 +57,39 @@ const getOnBase = async (osuId) => {
 };
 
 /**
- * @summary Update a specific application by unique ID
+ * @summary Update an OnBase record of a person
  * @function
- * @param {string} id Unique application ID
- * @returns {Promise<Object>} Promise object represents a updated application
+ * @param {string} osuId OSU ID
+ * @param {object} body request body
+ * @returns {Promise<Object>} Promise object represents an OnBase record
  */
-const patchApplicationById = async (id) => {
-  const connection = await conn.getConnection();
+const patchOnBase = async (osuId, body) => {
+  const {
+    onBaseDocumentType,
+    additionalChecklistInfo,
+    documentReceiveDate,
+  } = body.data.attributes;
+  let connection = await conn.getConnection();
   try {
-    const { rawApplications } = await connection.execute(contrib.patchApplicationById(id), id);
+    await connection.execute(contrib.patchApplications(), {
+      osuId,
+      onBaseDocumentType,
+      additionalChecklistInfo,
+      documentReceiveDate,
+    });
+    let lines = [];
+    ({ connection, lines } = await getLine(connection, lines));
 
-    if (_.isEmpty(rawApplications)) {
-      return undefined;
+    const errorString = lines.length >= 1 ? _.split(lines[0], ';')[14] : undefined;
+    if (errorString) {
+      throw createError(400, errorString);
     }
-    if (rawApplications.length > 1) {
-      throw new Error('Expect a single object but got multiple results.');
-    } else {
-      const [rawApplication] = rawApplications;
-      const serializedApplication = serializeOnBase(rawApplication);
-      return serializedApplication;
-    }
+
+    const serializedOnBase = serializeOnBase(lines, osuId);
+    return serializedOnBase;
   } finally {
     connection.close();
   }
 };
 
-module.exports = { getOnBase, patchApplicationById };
+module.exports = { getOnBase, patchOnBase };

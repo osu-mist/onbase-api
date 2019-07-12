@@ -103,7 +103,7 @@ parameters:
               enum: [onBase]
             attributes:
               properties:
-                onbaseDocumentType:
+                onBaseDocumentType:
                   type: string
                   description: OnBase document type
                 additionalChecklistInfo:
