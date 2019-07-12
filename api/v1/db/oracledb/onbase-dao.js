@@ -49,6 +49,7 @@ const getOnBase = async (osuId) => {
     let lines = [];
     ({ connection, lines } = await getLine(connection, lines));
 
+    // The only possible error for this stored procedure is applications for the person not found
     const errorString = lines.length >= 1 ? _.split(lines[0], ';')[14] : undefined;
     if (errorString) {
       throw createError(404, errorString);
@@ -80,14 +81,18 @@ const patchOnBase = async (osuId, body) => {
     ({ connection, lines } = await getLine(connection, lines));
 
     const errorString = lines.length >= 1 ? _.split(lines[0], ';')[14] : undefined;
+
+    // The error reasons are separated by '|'
     const errors = _.split(errorString, '|');
 
+    // Return 404 if one of the error reasons is applications for the person not found
     _.forEach(errors, (error) => {
       if (error.includes('NO APPLICATIONS')) {
         throw createError(404, error);
       }
     });
 
+    // Throw a 400 bad request error with the rest reasons
     if (errorString) {
       throw createError(400, errorString);
     }
