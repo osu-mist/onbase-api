@@ -113,6 +113,7 @@ parameters:
                   type: string
                   description: The document receive date in Oracle date format (DD-MON-YYYY HH24:MI:SS)
                   example: '20-MAY-19 00:00:00'
+                  pattern: '^\d{2}-[A-Z]{3}-\d{2} \d{2}:\d{2}:\d{2}$'
               required:
                 - onBaseDocumentType
                 - documentReceiveDate
@@ -137,6 +138,7 @@ definitions:
         type: string
         description: Term code
         example: '201901'
+        pattern: '^\d{6}$'
       applicationNumber:
         type: string
         description: Application number
@@ -149,6 +151,7 @@ definitions:
         type: string
         description: The status date in Oracle date format (DD-MON-YYYY HH24:MI:SS)
         example: '20-MAY-19 00:00:00'
+        pattern: '^\d{2}-[A-Z]{3}-\d{2} \d{2}:\d{2}:\d{2}$'
       decisionCode:
         type: string
         description: Application decision code
@@ -157,6 +160,7 @@ definitions:
         type: string
         description: The decision date in Oracle date format (DD-MON-YYYY HH24:MI:SS)
         example: '20-MAY-19 00:00:00'
+        pattern: '^\d{2}-[A-Z]{3}-\d{2} \d{2}:\d{2}:\d{2}$'
       levelCode:
         type: string
         description: Application level code
@@ -177,6 +181,7 @@ definitions:
         type: string
         description: The initial complete date in Oracle date format (DD-MON-YYYY HH24:MI:SS)
         example: '20-MAY-19 00:00:00'
+        pattern: '^\d{2}-[A-Z]{3}-\d{2} \d{2}:\d{2}:\d{2}$'
       justCompletedInd:
         type: boolean
         description: The indicator shows if the application is just completed
