@@ -15,6 +15,10 @@ const get = async (req, res) => {
     const result = await onBaseDao.getOnBase(osuId);
     return res.send(result);
   } catch (err) {
+    if (err.statusCode === 404) {
+      const errors = _.split(err.message, '|');
+      return errorBuilder(res, 404, errors);
+    }
     return errorHandler(res, err);
   }
 };
@@ -32,9 +36,14 @@ const patch = async (req, res) => {
     const result = await onBaseDao.patchOnBase(osuId, body);
     return res.send(result);
   } catch (err) {
-    if (err.statusCode === 400) {
-      const errors = _.split(err.message, '|');
-      return errorBuilder(res, 400, errors);
+    const errorStatusCode = err.statusCode;
+
+    if (errorStatusCode) {
+      let errorDetails = err;
+      if (errorStatusCode === 400) {
+        errorDetails = _.split(err.message, '|');
+      }
+      return errorBuilder(res, errorStatusCode, errorDetails);
     }
     return errorHandler(res, err);
   }

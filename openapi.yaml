@@ -113,6 +113,9 @@ parameters:
                   type: string
                   description: The document receive date in Oracle date format (DD-MON-YYYY HH24:MI:SS)
                   example: '20-MAY-19 00:00:00'
+              required:
+                - onBaseDocumentType
+                - documentReceiveDate
               additionalProperties: false
           required:
             - id

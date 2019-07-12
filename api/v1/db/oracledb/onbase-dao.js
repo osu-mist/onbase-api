@@ -49,6 +49,11 @@ const getOnBase = async (osuId) => {
     let lines = [];
     ({ connection, lines } = await getLine(connection, lines));
 
+    const errorString = lines.length >= 1 ? _.split(lines[0], ';')[14] : undefined;
+    if (errorString) {
+      throw createError(404, errorString);
+    }
+
     const serializedOnBase = serializeOnBase(lines, osuId);
     return serializedOnBase;
   } finally {
@@ -65,15 +70,24 @@ const getOnBase = async (osuId) => {
  */
 const patchOnBase = async (osuId, body) => {
   let connection = await conn.getConnection();
+  const { attributes } = body.data;
   try {
-    await connection.execute(contrib.patchApplications(), _.assign(
+    await connection.execute(contrib.patchApplications(attributes), _.assign(
       { osuId },
-      body.data.attributes,
+      attributes,
     ));
     let lines = [];
     ({ connection, lines } = await getLine(connection, lines));
 
     const errorString = lines.length >= 1 ? _.split(lines[0], ';')[14] : undefined;
+    const errors = _.split(errorString, '|');
+
+    _.forEach(errors, (error) => {
+      if (error.includes('NO APPLICATIONS')) {
+        throw createError(404, error);
+      }
+    });
+
     if (errorString) {
       throw createError(400, errorString);
     }
