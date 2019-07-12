@@ -1,6 +1,6 @@
 const appRoot = require('app-root-path');
 
-const applicationsDao = require('../../../db/oracledb/applications-dao');
+const onBaseDao = require('../../db/oracledb/onbase-dao');
 
 const { errorHandler } = appRoot.require('errors/errors');
 const { openapi: { paths } } = appRoot.require('utils/load-openapi');
@@ -11,13 +11,13 @@ const { openapi: { paths } } = appRoot.require('utils/load-openapi');
 const get = async (req, res) => {
   try {
     const { osuId } = req.params;
-    const result = await applicationsDao.getApplications(osuId);
+    const result = await onBaseDao.getOnBase(osuId);
     return res.send(result);
   } catch (err) {
     return errorHandler(res, err);
   }
 };
 
-get.apiDoc = paths['/onbase/{osuId}/applications'].get;
+get.apiDoc = paths['/onbase/{osuId}'].get;
 
 module.exports = { get };

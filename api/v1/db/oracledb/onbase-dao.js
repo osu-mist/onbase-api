@@ -2,10 +2,7 @@ const appRoot = require('app-root-path');
 const _ = require('lodash');
 const { BIND_OUT, NUMBER, STRING } = require('oracledb');
 
-const {
-  serializeApplications,
-  serializeApplication,
-} = require('../../serializers/applications-serializer');
+const { serializeOnBase } = require('../../serializers/onbase-serializer');
 
 const conn = appRoot.require('api/v1/db/oracledb/connection');
 const { contrib } = appRoot.require('api/v1/db/oracledb/contrib/contrib');
@@ -39,35 +36,19 @@ const getLine = async (connection, lines) => {
 };
 
 /**
- * @summary Return a list of applications
+ * @summary Return an OnBase record of a person
  * @function
- * @returns {Promise<Object[]>} Promise object represents a list of applications
+ * @returns {Promise<Object[]>} Promise object represents an OnBase record
  */
-const getApplications = async (osuId) => {
+const getOnBase = async (osuId) => {
   let connection = await conn.getConnection();
   try {
     await connection.execute(contrib.getApplications(), { osuId });
     let lines = [];
     ({ connection, lines } = await getLine(connection, lines));
 
-    const rawApplications = [];
-    _.forEach(lines, (line) => {
-      const array = _.split(line, ',');
-      rawApplications.push({
-        applicationId: `${array[0]}-${array[1]}-${array[2]}`,
-        osuId: array[0],
-        termCode: array[1],
-        number: array[2],
-        decisionCode: array[3],
-        levelCode: array[4],
-        campusCode: array[5],
-        studentTypeCode: array[6],
-        admitCode: array[7],
-      });
-    });
-
-    const serializedPets = serializeApplications(rawApplications, osuId);
-    return serializedPets;
+    const serializedOnBase = serializeOnBase(lines, osuId);
+    return serializedOnBase;
   } finally {
     connection.close();
   }
@@ -91,7 +72,7 @@ const patchApplicationById = async (id) => {
       throw new Error('Expect a single object but got multiple results.');
     } else {
       const [rawApplication] = rawApplications;
-      const serializedApplication = serializeApplication(rawApplication);
+      const serializedApplication = serializeOnBase(rawApplication);
       return serializedApplication;
     }
   } finally {
@@ -99,4 +80,4 @@ const patchApplicationById = async (id) => {
   }
 };
 
-module.exports = { getApplications, patchApplicationById };
+module.exports = { getOnBase, patchApplicationById };
