@@ -64,19 +64,12 @@ const getOnBase = async (osuId) => {
  * @returns {Promise<Object>} Promise object represents an OnBase record
  */
 const patchOnBase = async (osuId, body) => {
-  const {
-    onBaseDocumentType,
-    additionalChecklistInfo,
-    documentReceiveDate,
-  } = body.data.attributes;
   let connection = await conn.getConnection();
   try {
-    await connection.execute(contrib.patchApplications(), {
-      osuId,
-      onBaseDocumentType,
-      additionalChecklistInfo,
-      documentReceiveDate,
-    });
+    await connection.execute(contrib.patchApplications(), _.assign(
+      { osuId },
+      body.data.attributes,
+    ));
     let lines = [];
     ({ connection, lines } = await getLine(connection, lines));
 
