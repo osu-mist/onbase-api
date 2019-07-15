@@ -16,8 +16,8 @@ const get = async (req, res) => {
     return res.send(result);
   } catch (err) {
     if (err.statusCode === 404) {
-      const errors = _.split(err.message, '|');
-      return errorBuilder(res, 404, errors);
+      const [error] = _.split(err.message, '|');
+      return errorBuilder(res, 404, error);
     }
     return errorHandler(res, err);
   }

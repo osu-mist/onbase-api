@@ -121,6 +121,7 @@ parameters:
           required:
             - id
             - type
+            - attributes
           additionalProperties: false
       required:
         - data

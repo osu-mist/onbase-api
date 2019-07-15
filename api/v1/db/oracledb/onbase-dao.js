@@ -3,16 +3,16 @@ const createError = require('http-errors');
 const _ = require('lodash');
 const { BIND_OUT, NUMBER, STRING } = require('oracledb');
 
+const conn = require('./connection');
+const { contrib } = require('./contrib/contrib');
 const { serializeOnBase } = require('../../serializers/onbase-serializer');
-
-const conn = appRoot.require('api/v1/db/oracledb/connection');
-const { contrib } = appRoot.require('api/v1/db/oracledb/contrib/contrib');
-
 
 /**
  * @summary A Helper recursive function to read buffer
  * @function
- * @returns {Promise<String[]>} Promise object represents a list of records
+ * @param {string} osuId OSU ID
+ * @param {string[]} osuId OSU ID
+ * @returns {Promise<string[]>} Promise object represents a list of records
  */
 const getLine = async (connection, lines) => {
   try {
