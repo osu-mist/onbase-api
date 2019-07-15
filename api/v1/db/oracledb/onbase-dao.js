@@ -73,10 +73,10 @@ const patchOnBase = async (osuId, body) => {
   let connection = await conn.getConnection();
   const { attributes } = body.data;
   try {
-    await connection.execute(contrib.patchApplications(attributes), _.assign(
-      { osuId },
-      attributes,
-    ));
+    await connection.execute(
+      contrib.patchApplications(attributes),
+      _.assign({ osuId }, attributes),
+    );
     let lines = [];
     ({ connection, lines } = await getLine(connection, lines));
 
