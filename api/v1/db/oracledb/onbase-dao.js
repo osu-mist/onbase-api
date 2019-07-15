@@ -1,4 +1,3 @@
-const appRoot = require('app-root-path');
 const createError = require('http-errors');
 const _ = require('lodash');
 const { BIND_OUT, NUMBER, STRING } = require('oracledb');
