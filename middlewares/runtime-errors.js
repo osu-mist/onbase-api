@@ -19,9 +19,28 @@ const customOpenApiError = (err, req, res, next) => {
   if (!isOpenApiError(err)) {
     return next(err);
   }
-  /**
-   * @todo Implement custom OpenAPI error rules and handlers here.
-   */
+  const { status, errors } = err;
+  const handledErrors = [];
+  const nineDigitIds = ['osuId', 'data.id'];
+
+  if (status === 400) {
+    const details = [];
+    _.forEach(errors, (error) => {
+      const { path, errorCode } = error;
+
+      if (errorCode === 'pattern.openapi.validation') {
+        const isNineDigitPath = _.some(nineDigitIds, it => _.includes(path, it));
+        if (isNineDigitPath) {
+          details.push(`${path} must be 9 digits`);
+        } else if (path === 'data.attributes.documentReceiveDate') {
+          details.push(`${path} must be in Oracle Date format: DD-MON-YYYY HH24:MI:SS`);
+        }
+        handledErrors.push(error);
+      }
+    });
+    err.errors = _.difference(err.errors, handledErrors);
+    err.details = details;
+  }
   return next(err);
 };
 
