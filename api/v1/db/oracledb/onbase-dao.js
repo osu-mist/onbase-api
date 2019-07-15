@@ -7,32 +7,42 @@ const { contrib } = require('./contrib/contrib');
 const { serializeOnBase } = require('../../serializers/onbase-serializer');
 
 /**
+ * @summary A Helper function to parse the error string
+ * @function
+ * @param {string} lines a list of OnBase records
+ * @returns {string} A string represent the error reasons
+ */
+const parseErrorString = (lines) => {
+  if (lines.length >= 1) {
+    // The 14th item of the splitted array is the error string
+    return _.split(lines[0], ';')[14];
+  }
+  return undefined;
+};
+
+/**
  * @summary A Helper recursive function to read buffer
  * @function
  * @param {string} osuId OSU ID
- * @param {string[]} osuId OSU ID
- * @returns {Promise<string[]>} Promise object represents a list of records
+ * @param {string[]} lines a list of OnBase records
+ * @returns {Object} Promise object contains a connection object and a list of records
  */
 const getLine = async (connection, lines) => {
-  try {
-    const { outBinds } = await connection.execute(
-      contrib.getLine(),
-      {
-        line: { dir: BIND_OUT, type: STRING, maxSize: 32767 },
-        status: { dir: BIND_OUT, type: NUMBER },
-      },
-    );
-    if (outBinds.line) {
-      lines.push(outBinds.line);
-    }
-    // The status code will be equal to 1 if there is no more output
-    if (outBinds.status !== 1) {
-      ({ connection, lines } = await getLine(connection, lines));
-    }
-    return { connection, lines };
-  } catch (error) {
-    throw new Error(error);
+  const { outBinds } = await connection.execute(
+    contrib.getLine(),
+    {
+      line: { dir: BIND_OUT, type: STRING, maxSize: 32767 },
+      status: { dir: BIND_OUT, type: NUMBER },
+    },
+  );
+  if (outBinds.line) {
+    lines.push(outBinds.line);
   }
+  // The status code will be equal to 1 if there is no more output
+  if (outBinds.status !== 1) {
+    ({ lines } = await getLine(connection, lines));
+  }
+  return { lines };
 };
 
 /**
@@ -40,16 +50,17 @@ const getLine = async (connection, lines) => {
  * @function
  * @param {string} osuId OSU ID
  * @returns {Promise<Object[]>} Promise object represents an OnBase record
+ * @throws {HttpError} throw a HTTP error if error string is not null
  */
 const getOnBase = async (osuId) => {
-  let connection = await conn.getConnection();
+  const connection = await conn.getConnection();
   try {
     await connection.execute(contrib.getApplications(), { osuId });
     let lines = [];
-    ({ connection, lines } = await getLine(connection, lines));
+    ({ lines } = await getLine(connection, lines));
 
     // The only possible error for this stored procedure is applications for the person not found
-    const errorString = lines.length >= 1 ? _.split(lines[0], ';')[14] : undefined;
+    const errorString = parseErrorString(lines);
     if (errorString) {
       throw createError(404, errorString);
     }
@@ -67,9 +78,10 @@ const getOnBase = async (osuId) => {
  * @param {string} osuId OSU ID
  * @param {object} body request body
  * @returns {Promise<Object>} Promise object represents an OnBase record
+ * @throws {HttpError} throw a HTTP error if error string is not null
  */
 const patchOnBase = async (osuId, body) => {
-  let connection = await conn.getConnection();
+  const connection = await conn.getConnection();
   const { attributes } = body.data;
   try {
     await connection.execute(
@@ -77,9 +89,9 @@ const patchOnBase = async (osuId, body) => {
       _.assign({ osuId }, attributes),
     );
     let lines = [];
-    ({ connection, lines } = await getLine(connection, lines));
+    ({ lines } = await getLine(connection, lines));
 
-    const errorString = lines.length >= 1 ? _.split(lines[0], ';')[14] : undefined;
+    const errorString = parseErrorString(lines);
 
     // The error reasons are separated by '|'
     const errors = _.split(errorString, '|');

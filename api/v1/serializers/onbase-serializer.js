@@ -25,9 +25,9 @@ const serializeOnBase = (rawRows, osuId) => {
     applications: [],
   };
 
-  _.forEach(rawRows, (rawRow) => {
+  rawOnBase.applications = _.map(rawRows, (rawRow) => {
     const array = _.split(rawRow, ';');
-    const application = {
+    return {
       termCode: array[1],
       applicationNumber: array[2],
       decisionCode: array[3],
@@ -42,7 +42,6 @@ const serializeOnBase = (rawRows, osuId) => {
       justCompletedInd: array[12] === 'Y',
       uacPendingInd: array[13] === 'Y',
     };
-    rawOnBase.applications.push(application);
   });
 
   const serializerArgs = {

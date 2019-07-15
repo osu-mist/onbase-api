@@ -39,9 +39,9 @@ const patch = async (req, res) => {
     const errorStatusCode = err.statusCode;
 
     if (errorStatusCode) {
-      let errorDetails = err;
-      if (errorStatusCode === 400) {
-        errorDetails = _.split(err.message, '|');
+      let errorDetails = _.split(err.message, '|');
+      if (errorStatusCode === 404) {
+        [errorDetails] = errorDetails;
       }
       return errorBuilder(res, errorStatusCode, errorDetails);
     }
