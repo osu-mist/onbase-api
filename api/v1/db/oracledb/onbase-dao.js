@@ -23,9 +23,9 @@ const parseErrorString = (lines) => {
 /**
  * @summary A Helper recursive function to read buffer
  * @function
- * @param {string} osuId OSU ID
+ * @param {string} connection Oracle connection object
  * @param {string[]} lines a list of OnBase records
- * @returns {Object} Promise object contains a connection object and a list of records
+ * @returns {Promise<string[]>} Promise object contains a list of records
  */
 const getLine = async (connection, lines) => {
   const { outBinds } = await connection.execute(
@@ -40,24 +40,23 @@ const getLine = async (connection, lines) => {
   }
   // The status code will be equal to 1 if there is no more output
   if (outBinds.status !== 1) {
-    ({ lines } = await getLine(connection, lines));
+    lines = await getLine(connection, lines);
   }
-  return { lines };
+  return lines;
 };
 
 /**
  * @summary Return an OnBase record of a person
  * @function
  * @param {string} osuId OSU ID
- * @returns {Promise<Object[]>} Promise object represents an OnBase record
- * @throws {HttpError} throw a HTTP error if error string is not null
+ * @returns {Promise<Object|HttpError>} Promise object represents a serialized OnBase record or a
+ *                                        HTTP error if error string is not null
  */
 const getOnBase = async (osuId) => {
   const connection = await conn.getConnection();
   try {
     await connection.execute(contrib.getApplications(), { osuId });
-    let lines = [];
-    ({ lines } = await getLine(connection, lines));
+    const lines = await getLine(connection, []);
 
     // The only possible error for this stored procedure is applications for the person not found
     const errorString = parseErrorString(lines);
@@ -66,6 +65,7 @@ const getOnBase = async (osuId) => {
     }
 
     const serializedOnBase = serializeOnBase(lines, osuId);
+
     return serializedOnBase;
   } finally {
     connection.close();
@@ -77,8 +77,8 @@ const getOnBase = async (osuId) => {
  * @function
  * @param {string} osuId OSU ID
  * @param {object} body request body
- * @returns {Promise<Object>} Promise object represents an OnBase record
- * @throws {HttpError} throw a HTTP error if error string is not null
+ * @returns {Promise<Object|HttpError>} Promise object represents a patched serialized OnBase record
+ *                                      or HTTP errors if error string is not null
  */
 const patchOnBase = async (osuId, body) => {
   const connection = await conn.getConnection();
@@ -88,8 +88,7 @@ const patchOnBase = async (osuId, body) => {
       contrib.patchApplications(attributes),
       _.assign({ osuId }, attributes),
     );
-    let lines = [];
-    ({ lines } = await getLine(connection, lines));
+    const lines = await getLine(connection, []);
 
     const errorString = parseErrorString(lines);
 
