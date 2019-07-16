@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
-  title: Express API Skeleton
-  description: Skeleton for Express APIs
+  title: OnBase API
+  description: OnBase API
   version: v1
   license:
     name: GNU Affero General Public License Version 3
@@ -16,66 +16,62 @@ host: api.oregonstate.edu
 basePath: /v1
 externalDocs:
   description: GitHub Repository
-  url: https://github.com/osu-mist/express-api-skeleton
+  url: https://github.com/osu-mist/onbase-api
+consumes:
+  - application/json
 produces:
   - application/json
 paths:
-  /pets:
+  /onbase/{osuId}:
     get:
-      summary: List all pets
+      summary: Return a recordset of application data for an OSU ID
       tags:
-        - pets
-      description: Get all pets
-      operationId: getPets
+        - onBase
+      description: Return a recordset of application data for an OSU ID
+      operationId: getApplications
       parameters:
         - $ref: '#/parameters/authorization'
-        - $ref: '#/parameters/pageNumber'
-        - $ref: '#/parameters/pageSize'
-        - in: query
-          name: species
-          description: Search by pet species
-          required: false
-          type: string
+        - $ref: '#/parameters/osuId'
       responses:
         '200':
           description: Successful response
           schema:
-            $ref: '#/definitions/PetsResult'
+            $ref: '#/definitions/OnBaseResult'
+        '404':
+          description: OnBase record for an OSU ID not found
+          schema:
+            $ref: '#/definitions/ErrorResult'
+        '500':
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrorResult'
+    patch:
+      summary: Update an existing application
+      tags:
+        - onBase
+      description: Update an existing application by application ID
+      operationId: patchApplicationById
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/osuId'
+        - $ref: '#/parameters/processDocumentBody'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/OnBaseResult'
         '400':
           description: Bad request
           schema:
-            $ref: '#/definitions/Errors'
-        '500':
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/Errors'
-  /pets/{id}:
-    get:
-      summary: Info for a specific pet
-      tags:
-        - pets
-      description: Get pet by unique ID
-      operationId: getPetById
-      parameters:
-        - $ref: '#/parameters/authorization'
-        - name: id
-          in: path
-          description: Unique Pet ID
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Successful response
-          schema:
-            $ref: '#/definitions/PetResult'
+            $ref: '#/definitions/ErrorResult'
         '404':
-          description: PetResource not found
+          description: OnBase record for an OSU ID not found
           schema:
-            $ref: '#/definitions/Errors'
+            $ref: '#/definitions/ErrorResult'
         '500':
           description: Internal server error
           schema:
-            $ref: '#/definitions/Errors'
+            $ref: '#/definitions/ErrorResult'
 parameters:
   authorization:
     name: Authorization
@@ -83,109 +79,142 @@ parameters:
     type: string
     required: true
     description: '"Bearer [token]" where [token] is your OAuth2 access token'
-  pageNumber:
-    name: page[number]
-    in: query
-    type: integer
-    required: false
-    description: Page number of results
-    default: 1
-    minimum: 1
-  pageSize:
-    name: page[size]
-    in: query
-    type: integer
-    required: false
-    description: Number of results to return
-    default: 25
-    maximum: 500
-    minimum: 1
+  osuId:
+    name: osuId
+    in: path
+    type: string
+    required: true
+    description: OSU ID of a person
+    pattern: '^\d{9}$'
+  processDocumentBody:
+    name: processDocumentBody
+    in: body
+    schema:
+      type: object
+      properties:
+        data:
+          properties:
+            id:
+              type: string
+              description: OSU ID of a person
+              pattern: '^\d{9}$'
+            type:
+              type: string
+              enum: [onBase]
+            attributes:
+              properties:
+                onBaseDocumentType:
+                  type: string
+                  description: OnBase document type
+                additionalChecklistInfo:
+                  type: string
+                  description: Additional checklist information
+                documentReceiveDate:
+                  type: string
+                  description: The document receive date in Oracle date format (DD-MON-YYYY HH24:MI:SS)
+                  example: '20-MAY-19 00:00:00'
+                  pattern: '^\d{2}-[A-Z]{3}-\d{2} \d{2}:\d{2}:\d{2}$'
+              required:
+                - onBaseDocumentType
+                - documentReceiveDate
+              additionalProperties: false
+          required:
+            - id
+            - type
+            - attributes
+          additionalProperties: false
+      required:
+        - data
+      additionalProperties: false
 definitions:
-  Meta:
-    properties:
-      totalResults:
-        type: integer
-        description: Total number of results
-        example: 10
-      totalPages:
-        type: integer
-        description: Total number of pages
-        example: 10
-      currentPageNumber:
-        type: integer
-        description: Page number of the returned results
-        example: 1
-      currentPageSize:
-        type: integer
-        description: Number of results per page
-        example: 25
   SelfLink:
     properties:
       self:
         type: string
         format: url
         description: Self-link of current resource
-  PaginationLinks:
+  Application:
     properties:
-      first:
+      termCode:
         type: string
-        format: url
-        description: The first page of data
-      last:
+        description: Term code
+        example: '201901'
+        pattern: '^\d{6}$'
+      applicationNumber:
         type: string
-        format: url
-        description: The last page of data
-      prev:
+        description: Application number
+        example: '3'
+      statusCode:
         type: string
-        format: url
-        description: The previous page of data
-      next:
+        description: Status code
+        example: 'D'
+      statusDate:
         type: string
-        format: url
-        description: The next page of data
-  PetResource:
+        description: The status date in Oracle date format (DD-MON-YYYY HH24:MI:SS)
+        example: '20-MAY-19 00:00:00'
+        pattern: '^\d{2}-[A-Z]{3}-\d{2} \d{2}:\d{2}:\d{2}$'
+      decisionCode:
+        type: string
+        description: Application decision code
+        example: 'AT'
+      decisionDate:
+        type: string
+        description: The decision date in Oracle date format (DD-MON-YYYY HH24:MI:SS)
+        example: '20-MAY-19 00:00:00'
+        pattern: '^\d{2}-[A-Z]{3}-\d{2} \d{2}:\d{2}:\d{2}$'
+      levelCode:
+        type: string
+        description: Application level code
+        example: '02'
+      campusCode:
+        type: string
+        description: Campus code
+        example: 'DSC'
+      studentTypeCode:
+        type: string
+        description: Student type code
+        example: 'T'
+      admitCode:
+        type: string
+        description: Admit code
+        example: 'RA'
+      initialCompleteDate:
+        type: string
+        description: The initial complete date in Oracle date format (DD-MON-YYYY HH24:MI:SS)
+        example: '20-MAY-19 00:00:00'
+        pattern: '^\d{2}-[A-Z]{3}-\d{2} \d{2}:\d{2}:\d{2}$'
+      justCompletedInd:
+        type: boolean
+        description: The indicator shows if the application is just completed
+        example: true
+      uacPendingInd:
+        type: boolean
+        description: The indicator shows if the application is strill pending in University Admission Committee
+        example: true
+  OnBaseResource:
     properties:
       id:
         type: string
-        description: A unique ID of pet
+        description: OSU ID of a person
+        pattern: '^\d{9}$'
       type:
         type: string
-        enum: [pet]
-      links:
-        $ref: '#/definitions/SelfLink'
+        enum: [onBase]
       attributes:
         properties:
-          name:
-            type: string
-            description: Name of pet
-            example: Hedwig
-          owner:
-            type: string
-            description: Name of owner
-            example: Harry Potter
-          species:
-            type: string
-            description: Species of pet
-            example: Owl
-  PetResult:
+          applications:
+            type: array
+            items:
+              $ref: '#/definitions/Application'
+      links:
+        $ref: '#/definitions/SelfLink'
+  OnBaseResult:
     properties:
       links:
         $ref: '#/definitions/SelfLink'
       data:
-        $ref: '#/definitions/PetResource'
-  PetsResult:
-    properties:
-      links:
-        allOf:
-          - $ref: '#/definitions/SelfLink'
-          - $ref: '#/definitions/PaginationLinks'
-      meta:
-        $ref: '#/definitions/Meta'
-      data:
-        type: array
-        items:
-          $ref: '#/definitions/PetResource'
-  Error:
+        $ref: '#/definitions/OnBaseResource'
+  ErrorObject:
     properties:
       status:
         type: string
@@ -209,9 +238,9 @@ definitions:
             format: url
             description: A link to further information about the error
             example: https://developer.oregonstate.edu/documentation/error-reference#1234
-  Errors:
+  ErrorResult:
     properties:
       errors:
         type: array
         items:
-          $ref: '#/definitions/Error'
+          $ref: '#/definitions/ErrorObject'
