@@ -23,7 +23,7 @@ const parseErrorString = (lines) => {
 /**
  * @summary A Helper recursive function to read buffer
  * @function
- * @param {string} connection Oracle connection object
+ * @param {object} connection Oracle connection object
  * @param {string[]} lines a list of OnBase records
  * @returns {Promise<string[]>} Promise object contains a list of records
  */
