@@ -7,7 +7,9 @@ const { errorBuilder, errorHandler } = appRoot.require('errors/errors');
 const { openapi: { paths } } = appRoot.require('utils/load-openapi');
 
 /**
- * @summary Get an OnBase records for a person
+ * Get an OnBase records for a person
+ *
+ * @type {RequestHandler}
  */
 const get = async (req, res) => {
   try {
@@ -24,7 +26,9 @@ const get = async (req, res) => {
 };
 
 /**
- * @summary Update an OnBase records for a person
+ * Update an OnBase records for a person
+ *
+ * @type {RequestHandler}
  */
 const patch = async (req, res) => {
   try {

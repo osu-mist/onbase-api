@@ -14,9 +14,9 @@ const onBaseUrl = resourcePathLink(apiBaseUrl, 'onbase');
 /**
  * @summary A function to serialize raw data
  * @function
- * @param {Object[]} rawRows Raw data rows from data source
- * @param {String} osuId OSU ID
- * @returns {Object} Serialized resources data
+ * @param {object[]} rawRows Raw data rows from data source
+ * @param {string} osuId OSU ID
+ * @returns {object} Serialized resources data
  */
 const serializeOnBase = (rawRows, osuId) => {
   const rawOnBase = {
