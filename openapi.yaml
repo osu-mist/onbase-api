@@ -114,6 +114,11 @@ parameters:
                   description: The document receive date in Oracle date format (DD-MON-YYYY HH24:MI:SS)
                   example: '20-MAY-2019 00:00:00'
                   pattern: '^\d{2}-[A-Z]{3}-\d{4} \d{2}:\d{2}:\d{2}$'
+                applicationNumber:
+                  type: number
+                  format: integer
+                  description: The application number
+                  example: 1
               required:
                 - onBaseDocumentType
                 - documentReceiveDate
