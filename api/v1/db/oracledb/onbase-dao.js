@@ -49,7 +49,7 @@ const getLine = async (connection, lines) => {
  * @summary Return an OnBase record of a person
  * @function
  * @param {string} osuId OSU ID
- * @returns {Promise<Object|HttpError>} Promise object represents a serialized OnBase record or a
+ * @returns {Promise<object|HttpError>} Promise object represents a serialized OnBase record or a
  *                                        HTTP error if error string is not null
  */
 const getOnBase = async (osuId) => {
@@ -77,7 +77,7 @@ const getOnBase = async (osuId) => {
  * @function
  * @param {string} osuId OSU ID
  * @param {object} body request body
- * @returns {Promise<Object|HttpError>} Promise object represents a patched serialized OnBase record
+ * @returns {Promise<object|HttpError>} Promise object represents a patched serialized OnBase record
  *                                      or HTTP errors if error string is not null
  */
 const patchOnBase = async (osuId, body) => {

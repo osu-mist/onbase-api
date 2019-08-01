@@ -3,16 +3,22 @@ const composeErrors = require('compose-middleware').errors;
 const _ = require('lodash');
 
 const { errorBuilder, errorHandler } = appRoot.require('errors/errors');
+const { logger } = appRoot.require('utils/logger');
 
 /**
- * @summary Determines if an error is an openapi error
+ * Determines if an error is an OpenAPI error
+ *
+ * @param {object} err Error object
+ * @returns {boolean} Whether the error is an OpenAPI error or not
  */
 const isOpenApiError = err => (
   _.has(err, 'errors') && _.every(err.errors, it => _.includes(it.errorCode, 'openapi'))
 );
 
 /**
- * @summary The middleware for handling custom openapi errors
+ * The middleware for handling custom openapi errors
+ *
+ * @type {ErrorRequestHandler}
  */
 const customOpenApiError = (err, req, res, next) => {
   // call the next middleware function if the error is not an openapi error
@@ -21,20 +27,17 @@ const customOpenApiError = (err, req, res, next) => {
   }
   const { status, errors } = err;
   const handledErrors = [];
-  const nineDigitIds = ['osuId', 'data.id'];
 
   if (status === 400) {
     const details = [];
     _.forEach(errors, (error) => {
       const { path, errorCode } = error;
 
-      if (errorCode === 'pattern.openapi.validation') {
-        const isNineDigitPath = _.some(nineDigitIds, it => _.includes(path, it));
-        if (isNineDigitPath) {
-          details.push(`${path} must be 9 digits`);
-        } else if (path === 'data.attributes.documentReceiveDate') {
-          details.push(`${path} must be in Oracle Date format: DD-MON-YYYY HH24:MI:SS`);
-        }
+      if (
+        errorCode === 'pattern.openapi.validation'
+        && path === 'data.attributes.documentReceiveDate'
+      ) {
+        details.push(`${path} must be in Oracle Date format: DD-MON-YYYY HH24:MI:SS`);
         handledErrors.push(error);
       }
     });
@@ -45,7 +48,9 @@ const customOpenApiError = (err, req, res, next) => {
 };
 
 /**
- * @summary The middleware for handling general openapi errors
+ * The middleware for handling general openapi errors
+ *
+ * @type {ErrorRequestHandler}
  */
 const openApiError = (err, req, res, next) => {
   // call the next middleware function if the error is not an openapi error
@@ -53,10 +58,41 @@ const openApiError = (err, req, res, next) => {
     return next(err);
   }
 
+  /**
+   * Generate message for illegal value of enum
+   *
+   * @param {object} error The error object
+   * @returns {string} The enum message
+   */
+  const enumErrorMessage = error => (
+    `${error.path} must be one of ['${error.params.allowedValues.join("', '")}']`
+  );
+
   const { status, errors } = err;
 
   if (status === 400) {
     const details = err.details || [];
+
+    // Return 409 if type is invalid
+    const invalidTypeError = _.find(errors, error => (
+      error.path === 'data.type' && error.errorCode === 'enum.openapi.validation'
+    ));
+    if (invalidTypeError) {
+      return errorBuilder(res, 409, enumErrorMessage(invalidTypeError));
+    }
+
+    // Return 404 if error is pattern validation and in path
+    const invalidPatternError = _.find(errors, error => (
+      error.errorCode === 'pattern.openapi.validation' && error.location === 'path'
+    ));
+    if (invalidPatternError) {
+      return errorBuilder(
+        res,
+        404,
+        `'${invalidPatternError.path}' in path ${invalidPatternError.message}`,
+      );
+    }
+
     _.forEach(errors, (error) => {
       const {
         path,
@@ -66,7 +102,7 @@ const openApiError = (err, req, res, next) => {
       } = error;
 
       if (errorCode === 'enum.openapi.validation') {
-        details.push(`${path} must be one of ['${error.params.allowedValues.join("', '")}']`);
+        details.push(enumErrorMessage(error));
       } else if (errorCode === 'additionalProperties.openapi.validation') {
         const { additionalProperty } = error.params;
         details.push(`Unrecognized property '${additionalProperty}' in path: '${path}', location: '${location}'`);
@@ -80,7 +116,9 @@ const openApiError = (err, req, res, next) => {
 };
 
 /**
- * @summary The middleware for handling generic errors
+ * The middleware for handling generic errors
+ *
+ * @type {ErrorRequestHandler}
  */
 const genericError = (err, req, res, next) => { // eslint-disable-line no-unused-vars
   const status = _.has(err, 'customStatus') ? err.customStatus : 500;
@@ -89,7 +127,7 @@ const genericError = (err, req, res, next) => { // eslint-disable-line no-unused
 
   if (status === 500) {
     if (detail) {
-      console.error(detail);
+      logger.error(detail);
     }
     errorHandler(res, err);
   } else {
