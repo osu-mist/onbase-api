@@ -4,7 +4,6 @@ const _ = require('lodash');
 const onBaseDao = require('../../db/oracledb/onbase-dao');
 
 const { errorBuilder, errorHandler } = appRoot.require('errors/errors');
-const { openapi: { paths } } = appRoot.require('utils/load-openapi');
 
 /**
  * Get an OnBase records for a person
@@ -52,8 +51,5 @@ const patch = async (req, res) => {
     return errorHandler(res, err);
   }
 };
-
-get.apiDoc = paths['/onbase/{osuId}'].get;
-patch.apiDoc = paths['/onbase/{osuId}'].patch;
 
 module.exports = { get, patch };
