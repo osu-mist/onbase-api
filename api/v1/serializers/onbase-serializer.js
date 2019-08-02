@@ -12,8 +12,8 @@ const onBaseResourceKeys = _.keys(onBaseResourceProp.attributes.properties);
 const onBaseUrl = resourcePathLink(apiBaseUrl, 'onbase');
 
 /**
- * @summary A function to serialize raw data
- * @function
+ * A function to serialize raw data
+ *
  * @param {object[]} rawRows Raw data rows from data source
  * @param {string} osuId OSU ID
  * @returns {object} Serialized resources data
