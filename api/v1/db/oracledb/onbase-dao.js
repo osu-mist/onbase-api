@@ -7,8 +7,8 @@ const { contrib } = require('./contrib/contrib');
 const { serializeOnBase } = require('../../serializers/onbase-serializer');
 
 /**
- * @summary A Helper function to parse the error string
- * @function
+ * A Helper function to parse the error string
+ *
  * @param {string} lines a list of OnBase records
  * @returns {string} A string represent the error reasons
  */
@@ -21,8 +21,8 @@ const parseErrorString = (lines) => {
 };
 
 /**
- * @summary A Helper recursive function to read buffer
- * @function
+ * A Helper recursive function to read buffer
+ *
  * @param {object} connection Oracle connection object
  * @param {string[]} lines a list of OnBase records
  * @returns {Promise<string[]>} Promise object contains a list of records
@@ -46,8 +46,8 @@ const getLine = async (connection, lines) => {
 };
 
 /**
- * @summary Return an OnBase record of a person
- * @function
+ * Return an OnBase record of a person
+ *
  * @param {string} osuId OSU ID
  * @returns {Promise<object|HttpError>} Promise object represents a serialized OnBase record or a
  *                                        HTTP error if error string is not null
@@ -73,8 +73,8 @@ const getOnBase = async (osuId) => {
 };
 
 /**
- * @summary Update an OnBase record of a person
- * @function
+ * Update an OnBase record of a person
+ *
  * @param {string} osuId OSU ID
  * @param {object} body request body
  * @returns {Promise<object|HttpError>} Promise object represents a patched serialized OnBase record
