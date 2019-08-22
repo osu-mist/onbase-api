@@ -1,4 +1,4 @@
-# OnBase API ![version](https://img.shields.io/badge/version-v1-blue.svg) [![openapi](https://img.shields.io/badge/openapi-2.0-green.svg)](./openapi.yaml) ![node](https://img.shields.io/badge/node-10.13-brightgreen.svg)
+# OnBase API ![version](https://img.shields.io/badge/version-v1-blue.svg) [![openapi](https://img.shields.io/badge/openapi-2.0-green.svg)](./openapi.yaml) ![node](https://img.shields.io/badge/node-10.13-brightgreen.svg) ![npm](https://img.shields.io/badge/npm-6.11.1-orange.svg)
 
 OnBase API. API definition is contained in the [OpenAPI specification](./openapi.yaml).
 
@@ -30,10 +30,6 @@ OnBase API. API definition is contained in the [OpenAPI specification](./openapi
 ### Installing
 
 ```shell
-# Using yarn (recommended)
-$ yarn
-
-# Using npm
 $ npm install
 ```
 
@@ -75,6 +71,36 @@ $ gulp test
 
 # Using npm
 $ npm test
+```
+
+### Type checking
+
+This API is configured to use [Flow static type checking](https://flow.org/).
+
+Check flow types:
+
+```shell
+# Using gulp
+$ gulp typecheck
+
+# Using npm
+$ npm run typecheck
+```
+
+## Babel
+
+This API uses [Babel](https://babeljs.io/) to transpile JavaScript code. After running, the transpiled code will be located in `dist/`. Source maps are also generated in the same directory. These contain references to the original source code for debugging purposes.
+
+Babel allows for newer ECMAScript syntax such as `import` and `export` from ES6. It also allows [Babel plugins](https://babeljs.io/docs/en/plugins) to be used.
+
+Compilation is done by the `babel` gulp task. This is handled automatically by other tasks but can be manually invoked:
+
+```shell
+# Using gulp
+$ gulp babel
+
+# Using npm
+$ npm run babel
 ```
 
 ## Base project off the skeleton
@@ -126,15 +152,11 @@ $ npm test
 
 The following instructions show you how to connect the API to an Oracle database.
 
-1. Install [Oracle Instant Client](http://www.oracle.com/technetwork/database/database-technologies/instant-client/overview/index.html) by following [this installation guide](https://oracle.github.io/odpi/doc/installation.html).
+1. Install [Oracle Instant Client](http://www.oracle.com/technetwork/database/database-technologies/instant-client/overview/index.html) by following [this installation guide](https://oracle.github.io/odpi/doc/installation.html). **IMPORTANT:** Download the Basic Package, not the Basic Light Package.
 
 2. Install [oracledb](https://www.npmjs.com/package/oracledb) via package management:
 
     ```shell
-    # Using yarn (recommended)
-    $ yarn add oracledb
-
-    # Using npm
     $ npm install oracledb
     ```
 
@@ -182,10 +204,10 @@ The following instructions show you how to connect the API to an Oracle database
     $ cp api/v1/db/oracledb/pets-dao-example.js api/v1/db/oracledb/<resources>-dao.js
     ```
 
-6. Make sure to require the correct path for the new DAO file at path handlers files:
+7. Make sure to use the correct path for the new DAO file at path handlers files:
 
     ```js
-    const petsDao = require('../db/oracledb/<resources>-dao');
+    import petsDao from '../db/oracledb/<resources>-dao';
     ```
 
 ## Docker
