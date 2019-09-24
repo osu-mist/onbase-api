@@ -40,6 +40,8 @@ const serializeOnBase = (rawRows, osuId) => {
       initialCompleteDate: array[11],
       justCompletedInd: array[12] === 'Y',
       uacPendingInd: array[13] === 'Y',
+      startSession: array[14],
+      aswInd: array[15] === 'Y',
     };
   });
 

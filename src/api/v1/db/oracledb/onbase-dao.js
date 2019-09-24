@@ -14,8 +14,8 @@ import { serializeOnBase } from '../../serializers/onbase-serializer';
  */
 const parseErrorString = (lines) => {
   if (lines.length >= 1) {
-    // The 14th item of the splitted array is the error string
-    return _.split(lines[0], ';')[14];
+    // The 16th item of the splitted array is the error string
+    return _.split(lines[0], ';')[16];
   }
   return undefined;
 };
