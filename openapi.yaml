@@ -196,6 +196,14 @@ definitions:
         type: boolean
         description: The indicator shows if the application is strill pending in University Admission Committee
         example: true
+      startSession:
+        type: string
+        description: Start session
+        example: SOP8
+      aswInd:
+        type: boolean
+        description: Advance standing indicator
+        example: true
   OnBaseResource:
     properties:
       id:
