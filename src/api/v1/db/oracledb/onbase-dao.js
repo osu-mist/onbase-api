@@ -46,6 +46,18 @@ const getLine = async (connection, lines) => {
 };
 
 /**
+ * A Helper function to check if person not exist
+ *
+ * @param {object} connection Oracle connection object
+ * @param {string} osuId OSU ID
+ * @returns {Promise<boolean>} Promise object represents if person exist or not
+ */
+const personNotExist = async (connection, osuId) => {
+  const { rows } = await connection.execute(contrib.personExist(), { osuId });
+  return _.isEmpty(rows);
+};
+
+/**
  * Return an OnBase record of a person
  *
  * @param {string} osuId OSU ID
@@ -55,13 +67,16 @@ const getLine = async (connection, lines) => {
 const getOnBase = async (osuId) => {
   const connection = await getConnection();
   try {
+    if (await personNotExist(connection, osuId)) {
+      throw createError(404, 'Person not found');
+    }
+
     await connection.execute(contrib.getApplications(), { osuId });
     const lines = await getLine(connection, []);
 
-    // The only possible error for this stored procedure is applications for the person not found
     const errorString = parseErrorString(lines);
     if (errorString) {
-      throw createError(404, errorString);
+      throw createError(400, errorString);
     }
 
     const serializedOnBase = serializeOnBase(lines, osuId);
@@ -84,6 +99,10 @@ const patchOnBase = async (osuId, body) => {
   const connection = await getConnection();
   const { attributes } = body.data;
   try {
+    if (await personNotExist(connection, osuId)) {
+      throw createError(404, 'Person not found');
+    }
+
     await connection.execute(
       contrib.patchApplications(attributes),
       _.assign({ osuId }, attributes),
@@ -91,18 +110,6 @@ const patchOnBase = async (osuId, body) => {
     const lines = await getLine(connection, []);
 
     const errorString = parseErrorString(lines);
-
-    // The error reasons are separated by '|'
-    const errors = _.split(errorString, '|');
-
-    // Return 404 if one of the error reasons is applications for the person not found
-    _.forEach(errors, (error) => {
-      if (error.includes('NO APPLICATIONS')) {
-        throw createError(404, error);
-      }
-    });
-
-    // Throw a 400 bad request error with the rest reasons
     if (errorString) {
       throw createError(400, errorString);
     }
