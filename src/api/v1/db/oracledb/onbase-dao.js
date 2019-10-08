@@ -68,7 +68,7 @@ const getOnBase = async (osuId) => {
   const connection = await getConnection();
   try {
     if (await personNotExist(connection, osuId)) {
-      throw createError(404, `${osuId} - No person exist`);
+      throw createError(404, `${osuId} - No person exists`);
     }
 
     await connection.execute(contrib.getApplications(), { osuId });
@@ -100,7 +100,7 @@ const patchOnBase = async (osuId, body) => {
   const { attributes } = body.data;
   try {
     if (await personNotExist(connection, osuId)) {
-      throw createError(404, `${osuId} - No person exist`);
+      throw createError(404, `${osuId} - No person exists`);
     }
 
     await connection.execute(
