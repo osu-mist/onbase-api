@@ -75,5 +75,24 @@ describe('Test onbase-dao', () => {
         .and.deep.equals([{}, {}])
         .and.to.have.length(2);
     });
+
+    it('getOnBase should throw error when line length is >= 16', () => {
+      // The 16th element of 'line' returned by execute contains an error
+      const lineLength = 17; // length of 17 makes an array 0-16
+      const line = [...Array(lineLength).keys()].join(';'); // creates a string '0;1;...15;16'
+      const execStub = sinon.stub();
+      execStub.onSecondCall().returns({ outBinds: { line, status: 0 } });
+      execStub.returns({ outBinds: { line: {}, status: 1 } });
+      connectionStub(execStub);
+
+      const result = onBaseDao.getOnBase();
+      return result.should
+        .eventually.be.rejectedWith(lineLength) // error message will be whatever is 16th element
+        .and.be.an.instanceOf(Error);
+    });
+  });
+
+  describe('Test patchOnBase', () => {
+
   });
 });
