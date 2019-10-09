@@ -8,7 +8,7 @@ const sinon = require('sinon');
 
 // const conn = appRoot.require('api/v1/db/oracledb/connection');
 const conn = require('../../api/v1/db/oracledb/connection');
-const testData = require('./test-data');
+const { outBindsLast, outBindsRecursive } = require('./test-data');
 
 const daosSerializer = require('../../api/v1/serializers/onbase-serializer');
 
@@ -42,12 +42,7 @@ describe('Test onbase-dao', () => {
   describe('Test getOnBase', () => {
     it('getOnBase should be fulfilled with a single result', () => {
       const execStub = sinon.stub();
-      execStub.returns({
-        outBinds: {
-          line: {},
-          status: 1,
-        },
-      });
+      execStub.returns(outBindsLast);
       connectionStub(execStub);
 
       const result = onBaseDao.getOnBase();
@@ -60,13 +55,8 @@ describe('Test onbase-dao', () => {
     it('getOnBase should be fulfilled with multiple results', () => {
       const execStub = sinon.stub();
       // execute first call is ignored for this test case
-      execStub.onSecondCall().returns({ outBinds: { line: {}, status: 0 } });
-      execStub.returns({
-        outBinds: {
-          line: {},
-          status: 1,
-        },
-      });
+      execStub.onSecondCall().returns(outBindsRecursive);
+      execStub.returns(outBindsLast);
       connectionStub(execStub);
 
       const result = onBaseDao.getOnBase();
