@@ -8,7 +8,7 @@ const sinon = require('sinon');
 
 // const conn = appRoot.require('api/v1/db/oracledb/connection');
 const conn = require('../../api/v1/db/oracledb/connection');
-const { outBindsLast, outBindsRecursive } = require('./test-data');
+const testData = require('./test-data');
 
 const daosSerializer = require('../../api/v1/serializers/onbase-serializer');
 
@@ -42,7 +42,7 @@ describe('Test onbase-dao', () => {
   describe('Test getOnBase', () => {
     it('getOnBase should be fulfilled with a single result', () => {
       const execStub = sinon.stub();
-      execStub.returns(outBindsLast);
+      execStub.returns(testData.outBindsLast);
       connectionStub(execStub);
 
       const result = onBaseDao.getOnBase();
@@ -55,8 +55,8 @@ describe('Test onbase-dao', () => {
     it('getOnBase should be fulfilled with multiple results', () => {
       const execStub = sinon.stub();
       // execute first call is ignored for this test case
-      execStub.onSecondCall().returns(outBindsRecursive);
-      execStub.returns(outBindsLast);
+      execStub.onSecondCall().returns(testData.outBindsRecursive);
+      execStub.returns(testData.outBindsLast);
       connectionStub(execStub);
 
       const result = onBaseDao.getOnBase();
@@ -82,6 +82,51 @@ describe('Test onbase-dao', () => {
   });
 
   describe('Test patchOnBase', () => {
+    it('patchOnBase should be fulfilled with a single result', () => {
+      const execStub = sinon.stub();
+      execStub.returns(testData.outBindsLast);
+      connectionStub(execStub);
 
+      const result = onBaseDao.patchOnBase(testData.fakeId, testData.patchBody);
+      return result.should
+        .eventually.be.fulfilled
+        .and.deep.equals([{}])
+        .and.to.have.length(1);
+    });
+
+    it('patchOnBase should be fulfilled with multiple results', () => {
+      const execStub = sinon.stub();
+      // execute first call is ignored for this test case
+      execStub.onSecondCall().returns(testData.outBindsRecursive);
+      execStub.returns(testData.outBindsLast);
+      connectionStub(execStub);
+
+      const result = onBaseDao.patchOnBase(testData.fakeId, testData.patchBody);
+      return result.should
+        .eventually.be.fulfilled
+        .and.deep.equals([{}, {}])
+        .and.to.have.length(2);
+    });
+
+    it('patchOnBase should throw error when line length is >= 16', () => {
+      // The 16th element of 'line' returned by execute contains an error
+      const lineLength = 17; // length of 17 makes an array 0-16
+      const line = [...Array(lineLength).keys()].join(';'); // creates a string '0;1;...15;16'
+      const execStub = sinon.stub();
+      execStub.returns({ outBinds: { line, status: 1 } });
+      connectionStub(execStub);
+
+      const result = onBaseDao.patchOnBase(testData.fakeId, testData.patchBody);
+      return result.should
+        .eventually.be.rejectedWith(lineLength) // error message will be whatever is 16th element
+        .and.be.an.instanceOf(Error);
+    });
+
+    it('patchOnBase should throw error with improper body', () => {
+      const result = onBaseDao.patchOnBase(testData.fakeId, testData.invalidPatchBody);
+      return result.should
+        .eventually.be.rejected
+        .and.be.an.instanceOf(Error);
+    });
   });
 });

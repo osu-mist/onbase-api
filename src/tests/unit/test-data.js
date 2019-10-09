@@ -1,4 +1,3 @@
-/* eslint no-unused-vars: 0 */
 const fakeId = 'fakeId';
 // defined as 'last' because a status = 1 will cause getLines() recursion to end
 const outBindsLast = {
@@ -14,4 +13,19 @@ const outBindsRecursive = {
   },
 };
 
-export { outBindsLast, outBindsRecursive };
+const patchBody = {
+  data: {
+    id: fakeId,
+    type: 'onBase',
+    attributes: {},
+  },
+};
+const invalidPatchBody = {};
+
+export {
+  fakeId,
+  outBindsLast,
+  outBindsRecursive,
+  patchBody,
+  invalidPatchBody,
+};
