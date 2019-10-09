@@ -1,8 +1,6 @@
 /* eslint no-unused-vars: 0 */
-// const appRoot = require('app-root-path');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
-const _ = require('lodash');
 const proxyquire = require('proxyquire');
 const sinon = require('sinon');
 
