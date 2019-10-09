@@ -50,11 +50,14 @@ const getLine = async (connection, lines) => {
  *
  * @param {object} connection Oracle connection object
  * @param {string} osuId OSU ID
- * @returns {Promise<boolean>} Promise object represents if person exist or not
+ * @returns {Promise<string>} Promise object with error message if peron not exist
  */
 const personNotExist = async (connection, osuId) => {
   const { rows } = await connection.execute(contrib.personExist(), { osuId });
-  return _.isEmpty(rows);
+  if (_.isEmpty(rows)) {
+    return `${osuId} - No person exists`;
+  }
+  return null;
 };
 
 /**
@@ -67,8 +70,9 @@ const personNotExist = async (connection, osuId) => {
 const getOnBase = async (osuId) => {
   const connection = await getConnection();
   try {
-    if (await personNotExist(connection, osuId)) {
-      throw createError(404, `${osuId} - No person exists`);
+    const errorMessage = await personNotExist(connection, osuId);
+    if (errorMessage) {
+      throw createError(404, errorMessage);
     }
 
     await connection.execute(contrib.getApplications(), { osuId });
@@ -99,8 +103,9 @@ const patchOnBase = async (osuId, body) => {
   const connection = await getConnection();
   const { attributes } = body.data;
   try {
-    if (await personNotExist(connection, osuId)) {
-      throw createError(404, `${osuId} - No person exists`);
+    const errorMessage = await personNotExist(connection, osuId);
+    if (errorMessage) {
+      throw createError(404, errorMessage);
     }
 
     await connection.execute(
