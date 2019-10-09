@@ -18,10 +18,15 @@ chai.use(chaiAsPromised);
 let onBaseDao;
 
 describe('Test onbase-dao', () => {
-  const connStub = (executeReturn) => sinon.stub(conn, 'getConnection').resolves({
-    execute: () => executeReturn,
-    close: () => null,
-  });
+  // the execute function gets called for a variety of reasons in the class being tested
+  // each test will need fine tuned control over what is returned from execute
+  const connectionStub = (execStub) => {
+    sinon.stub(conn, 'getConnection').resolves({
+      execute: execStub,
+      close: () => null,
+    });
+  };
+
   beforeEach(() => {
     const serializeOnBaseStub = sinon.stub(daosSerializer, 'serializeOnBase');
     serializeOnBaseStub.returnsArg(0);
@@ -35,11 +40,40 @@ describe('Test onbase-dao', () => {
   afterEach(() => sinon.restore());
 
   describe('Test getOnBase', () => {
-    it('dun dun dun', () => {
-      // console.log(util.__get__('getLine')());
+    it('getOnBase should be fulfilled with a single result', () => {
+      const execStub = sinon.stub();
+      execStub.returns({
+        outBinds: {
+          line: {},
+          status: 1,
+        },
+      });
+      connectionStub(execStub);
 
-      connStub({ outBinds: 0 });
-      console.log(onBaseDao.getOnBase(0));
+      const result = onBaseDao.getOnBase();
+      return result.should
+        .eventually.be.fulfilled
+        .and.deep.equals([{}])
+        .and.to.have.length(1);
+    });
+
+    it('getOnBase should be fulfilled with multiple results', () => {
+      const execStub = sinon.stub();
+      // execute first call is ignored for this test case
+      execStub.onSecondCall().returns({ outBinds: { line: {}, status: 0 } });
+      execStub.returns({
+        outBinds: {
+          line: {},
+          status: 1,
+        },
+      });
+      connectionStub(execStub);
+
+      const result = onBaseDao.getOnBase();
+      return result.should
+        .eventually.be.fulfilled
+        .and.deep.equals([{}, {}])
+        .and.to.have.length(2);
     });
   });
 });
