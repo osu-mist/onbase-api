@@ -48,7 +48,7 @@ const patch = async (req, res) => {
     const { osuId } = req.params;
     const { body } = req;
     if (osuId !== body.data.id) {
-      return errorBuilder(res, 409, ['OSU ID in path does not match the ID in body.']);
+      return errorBuilder(res, 409, 'OSU ID in path does not match the ID in body.');
     }
     const result = await onBaseDao.patchOnBase(osuId, body);
     return res.send(result);
