@@ -50,7 +50,7 @@ const getLine = async (connection, lines) => {
  *
  * @param {object} connection Oracle connection object
  * @param {string} osuId OSU ID
- * @returns {Promise<string>} Promise object with error message if peron not exist
+ * @returns {Promise<string>} Promise object with error message if person not exist
  */
 const personNotExist = async (connection, osuId) => {
   const { rows } = await connection.execute(contrib.personExist(), { osuId });
