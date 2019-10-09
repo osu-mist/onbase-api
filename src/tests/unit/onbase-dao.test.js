@@ -81,8 +81,7 @@ describe('Test onbase-dao', () => {
       const lineLength = 17; // length of 17 makes an array 0-16
       const line = [...Array(lineLength).keys()].join(';'); // creates a string '0;1;...15;16'
       const execStub = sinon.stub();
-      execStub.onSecondCall().returns({ outBinds: { line, status: 0 } });
-      execStub.returns({ outBinds: { line: {}, status: 1 } });
+      execStub.returns({ outBinds: { line, status: 1 } });
       connectionStub(execStub);
 
       const result = onBaseDao.getOnBase();
