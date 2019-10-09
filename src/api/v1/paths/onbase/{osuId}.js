@@ -11,6 +11,8 @@ import * as onBaseDao from '../../db/oracledb/onbase-dao';
  */
 const buildErrors = (res, err) => {
   const { statusCode, message } = err;
+
+  // The error reasons are separated by '|'
   let errorDetails = _.split(message, '|');
   if (statusCode === 404) {
     [errorDetails] = errorDetails;
