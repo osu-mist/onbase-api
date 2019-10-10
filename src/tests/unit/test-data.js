@@ -1,4 +1,5 @@
 const fakeId = 'fakeId';
+const fakeBaseUrl = 'www.fakeapi.com/api/';
 // defined as 'last' because a status = 1 will cause getLines() recursion to end
 const outBindsLast = {
   outBinds: {
@@ -24,6 +25,7 @@ const invalidPatchBody = {};
 
 export {
   fakeId,
+  fakeBaseUrl,
   outBindsLast,
   outBindsRecursive,
   patchBody,
