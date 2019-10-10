@@ -1,10 +1,8 @@
-/* eslint no-unused-vars: 0 */
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const proxyquire = require('proxyquire');
 const sinon = require('sinon');
 
-// const conn = appRoot.require('api/v1/db/oracledb/connection');
 const conn = require('../../api/v1/db/oracledb/connection');
 const testData = require('./test-data');
 
