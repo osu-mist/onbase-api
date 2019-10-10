@@ -1,5 +1,6 @@
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
+const _ = require('lodash');
 const proxyquire = require('proxyquire');
 const sinon = require('sinon');
 
@@ -66,7 +67,7 @@ describe('Test onbase-dao', () => {
     it('getOnBase should throw error when line length is >= 16', () => {
       // The 16th element of 'line' returned by execute contains an error
       const lineLength = 17; // length of 17 makes an array 0-16
-      const line = [...Array(lineLength).keys()].join(';'); // creates a string '0;1;...15;16'
+      const line = _.range(lineLength).join(';'); // creates a string '0;1;...15;16'
       const execStub = sinon.stub();
       execStub.returns({ outBinds: { line, status: 1 } });
       connectionStub(execStub);
