@@ -65,9 +65,13 @@ describe('Test onbase-dao', () => {
     });
 
     it('getOnBase should throw error when line length is >= 16', () => {
-      // The 16th element of 'line' returned by execute contains an error
-      const lineLength = 17; // length of 17 makes an array 0-16
-      const line = _.range(lineLength).join(';'); // creates a string '0;1;...15;16'
+      /*
+       * The 16th element of 'line' returned by execute contains an error
+       * length of 17 makes an array 0-16
+       */
+      const lineLength = 17;
+      // creates a string '0;1;...15;16'
+      const line = _.range(lineLength).join(';');
       const execStub = sinon.stub();
       execStub.returns({ outBinds: { line, status: 1 } });
       connectionStub(execStub);
