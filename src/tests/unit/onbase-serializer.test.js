@@ -74,5 +74,15 @@ describe('Test onbase-serializer', () => {
 
   it('Test serializeOnBase', () => {
     const { serializeOnBase } = onBaseSerializer;
+    const { rawOnBase } = testData;
+    const resourceType = 'onBase';
+
+    const serializedOnBase = serializeOnBase(rawOnBase, fakeId);
+    testSingleResource(serializedOnBase, resourceType, null);
+
+    const { applications } = serializedOnBase.data.attributes;
+    _.each(applications, (app) => {
+      expect(app).to.have.all.keys(_.keys(getDefinitionProps('Application')));
+    });
   });
 });
