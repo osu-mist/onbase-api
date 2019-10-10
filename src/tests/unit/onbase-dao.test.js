@@ -13,8 +13,10 @@ chai.use(chaiAsPromised);
 let onBaseDao;
 
 describe('Test onbase-dao', () => {
-  // the execute function gets called for a variety of reasons in the class being tested
-  // each test will need fine tuned control over what is returned from execute
+  /*
+  * The execute function gets called for a variety of reasons in the class being tested
+  * Each test will need fine tuned control over what is returned from execute
+  */
   const connectionStub = (execStub) => {
     sinon.stub(conn, 'getConnection').resolves({
       execute: execStub,
