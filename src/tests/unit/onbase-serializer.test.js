@@ -1,6 +1,8 @@
 /* eslint no-unused-vars: 0 */
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
+const chaiSubset = require('chai-subset');
+const _ = require('lodash');
 
 const testData = require('./test-data');
 const { openapi } = require('../../utils/load-openapi');
@@ -9,20 +11,22 @@ const onBaseSerializer = require('../../api/v1/serializers/onbase-serializer');
 
 chai.should();
 chai.use(chaiAsPromised);
+chai.use(chaiSubset);
 const { expect } = chai;
 
 describe('Test onbase-serializer', () => {
   const { fakeId, fakeBaseUrl } = testData;
 
   const resourceSubsetSchema = (resourceType, resourceAttributes) => {
+    const selfLink = `${fakeBaseUrl}/${resourceType.toLowerCase()}/${fakeId}`;
     const schema = {
       links: {
-        self: `${fakeBaseUrl}/${resourceType}`,
+        self: selfLink,
       },
       data: {
         id: fakeId,
-        type: resourceType,
-        links: { self: null },
+        type: 'onBase',
+        links: { self: selfLink },
       },
     };
     if (resourceAttributes) {
