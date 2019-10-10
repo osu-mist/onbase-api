@@ -38,7 +38,7 @@ paths:
           schema:
             $ref: '#/definitions/OnBaseResult'
         '404':
-          description: OnBase record for an OSU ID not found
+          description: Person record for an OSU ID not found
           schema:
             $ref: '#/definitions/ErrorResult'
         '500':
@@ -65,7 +65,12 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResult'
         '404':
-          description: OnBase record for an OSU ID not found
+          description: Person record for an OSU ID not found
+          schema:
+            $ref: '#/definitions/ErrorResult'
+        '409':
+          description: |
+            Conflict error, either type is incorrect or the path ID and body ID are not matched
           schema:
             $ref: '#/definitions/ErrorResult'
         '500':
