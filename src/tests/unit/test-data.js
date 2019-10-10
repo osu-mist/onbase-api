@@ -23,6 +23,24 @@ const patchBody = {
 };
 const invalidPatchBody = {};
 
+const rawOnBase = {
+  termCode: '201901',
+  applicationNumber: '3',
+  statusCode: 'D',
+  statusDate: '20-MAY-2019',
+  decisionCode: 'AT',
+  decisionDate: '20-MAY-2019',
+  levelCode: '02',
+  campusCode: 'DSC',
+  studentTypeCode: 'T',
+  adminCode: 'RA',
+  initialCompleteDate: '20-MAY-2019',
+  justCompletedInd: true,
+  uacPendingInd: true,
+  startSession: 'SOP8',
+  aswInd: true,
+};
+
 export {
   fakeId,
   fakeBaseUrl,
@@ -30,4 +48,5 @@ export {
   outBindsRecursive,
   patchBody,
   invalidPatchBody,
+  rawOnBase,
 };
