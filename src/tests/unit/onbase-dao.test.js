@@ -4,9 +4,9 @@ const _ = require('lodash');
 const proxyquire = require('proxyquire');
 const sinon = require('sinon');
 
-const conn = require('../../api/v1/db/oracledb/connection');
+const conn = require('api/v1/db/oracledb/connection');
+const onBaseSerializer = require('api/v1/serializers/onbase-serializer');
 const testData = require('./test-data');
-const onBaseSerializer = require('../../api/v1/serializers/onbase-serializer');
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -29,7 +29,7 @@ describe('Test onbase-dao', () => {
     const serializeOnBaseStub = sinon.stub(onBaseSerializer, 'serializeOnBase');
     serializeOnBaseStub.returnsArg(0);
 
-    onBaseDao = proxyquire('../../api/v1/db/oracledb/onbase-dao', {
+    onBaseDao = proxyquire('api/v1/db/oracledb/onbase-dao', {
       '../../serializers/onbase-serializer': {
         serializeOnBase: serializeOnBaseStub,
       },

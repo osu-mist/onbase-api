@@ -3,10 +3,10 @@ const chaiAsPromised = require('chai-as-promised');
 const chaiSubset = require('chai-subset');
 const _ = require('lodash');
 
+const { openapi } = require('utils/load-openapi');
+const onBaseSerializer = require('api/v1/serializers/onbase-serializer');
 const testData = require('./test-data');
-const { openapi } = require('../../utils/load-openapi');
 
-const onBaseSerializer = require('../../api/v1/serializers/onbase-serializer');
 
 chai.should();
 chai.use(chaiAsPromised);
