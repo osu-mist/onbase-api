@@ -1,5 +1,5 @@
 const fakeId = 'fakeId';
-const fakeBaseUrl = 'www.fakeapi.com/api/';
+const fakeBaseUrl = 'https://localhost/v1';
 // defined as 'last' because a status = 1 will cause getLines() recursion to end
 const outBindsLast = {
   outBinds: {
