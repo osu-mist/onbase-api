@@ -50,8 +50,8 @@ describe('Test onbase-dao', () => {
 
     it('getOnBase should be fulfilled with multiple results', () => {
       const execStub = sinon.stub();
-      // execute first call is ignored for this test case
-      execStub.onSecondCall().returns(testData.outBindsRecursive);
+      // third call is a special case that we want to cause getLine to recurse
+      execStub.onThirdCall().returns(testData.outBindsRecursive);
       execStub.returns(testData.outBindsLast);
       connectionStub(execStub);
 
@@ -92,8 +92,8 @@ describe('Test onbase-dao', () => {
 
     it('patchOnBase should be fulfilled with multiple results', () => {
       const execStub = sinon.stub();
-      // execute first call is ignored for this test case
-      execStub.onSecondCall().returns(testData.outBindsRecursive);
+      // third call is a special case that we want to cause getLine to recurse
+      execStub.onThirdCall().returns(testData.outBindsRecursive);
       execStub.returns(testData.outBindsLast);
       connectionStub(execStub);
 
