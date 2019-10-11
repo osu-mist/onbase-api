@@ -1,8 +1,8 @@
-const chai = require('chai');
-const chaiAsPromised = require('chai-as-promised');
-const _ = require('lodash');
-const proxyquire = require('proxyquire');
-const sinon = require('sinon');
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import _ from 'lodash';
+import proxyquire from 'proxyquire';
+import sinon from 'sinon';
 
 const conn = require('api/v1/db/oracledb/connection');
 const onBaseSerializer = require('api/v1/serializers/onbase-serializer');

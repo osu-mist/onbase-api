@@ -1,7 +1,7 @@
-const chai = require('chai');
-const chaiAsPromised = require('chai-as-promised');
-const chaiSubset = require('chai-subset');
-const _ = require('lodash');
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import chaiSubset from 'chai-subset';
+import _ from 'lodash';
 
 const { openapi } = require('utils/load-openapi');
 const onBaseSerializer = require('api/v1/serializers/onbase-serializer');
