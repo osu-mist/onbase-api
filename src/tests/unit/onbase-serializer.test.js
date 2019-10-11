@@ -7,7 +7,6 @@ const { openapi } = require('utils/load-openapi');
 const onBaseSerializer = require('api/v1/serializers/onbase-serializer');
 const testData = require('./test-data');
 
-chai.should();
 chai.use(chaiAsPromised);
 chai.use(chaiSubset);
 const { expect } = chai;
