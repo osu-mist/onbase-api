@@ -33,21 +33,6 @@ describe('Test onbase-serializer', () => {
   };
 
   /**
-   * Helper function for lite-testing single resource
-   *
-   * @param {object} serializedResource serialized resource
-   * @param {string} resourceType resource type
-   * @param {string} nestedProps field name of the nested properties
-   */
-  const testSingleResource = (serializedResource, resourceType, nestedProps) => {
-    expect(serializedResource).to.containSubset(resourceSubsetSchema(resourceType));
-
-    if (nestedProps) {
-      expect(serializedResource).to.have.nested.property(`data.attributes.${nestedProps}`);
-    }
-  };
-
-  /**
    * Helper function to get definition from openapi specification
    *
    * @param {string} definition the name of definition
@@ -75,7 +60,7 @@ describe('Test onbase-serializer', () => {
     const resourceType = 'onBase';
 
     const serializedOnBase = serializeOnBase(rawOnBase, fakeId);
-    testSingleResource(serializedOnBase, resourceType, null);
+    expect(serializedOnBase).to.containSubset(resourceSubsetSchema(resourceType));
 
     const { applications } = serializedOnBase.data.attributes;
     _.each(applications, (app) => {
