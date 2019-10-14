@@ -55,9 +55,9 @@ describe('Test onbase-dao', () => {
   };
 
   /*
-    * error message will be the same as the line length
-    * because we are generating an array of numbers
-    */
+   * error message will be the same as the line length
+   * because we are generating an array of numbers
+   */
   const testLineErrorResult = (testFunction) => {
     const execStub = sinon.stub();
     execStub.returns(testData.outBindsError);
