@@ -1,9 +1,9 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import config from 'config';
+import createError from 'http-errors';
 import proxyquire from 'proxyquire';
 import sinon from 'sinon';
-import createError from 'http-errors';
 
 // config must be replaced before connection can be imported
 sinon.replace(config, 'get', () => ({ oracledb: {} }));
