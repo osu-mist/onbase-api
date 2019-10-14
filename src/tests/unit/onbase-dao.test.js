@@ -2,6 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import proxyquire from 'proxyquire';
 import sinon from 'sinon';
+import createError from 'http-errors';
 
 const conn = require('api/v1/db/oracledb/connection');
 const onBaseSerializer = require('api/v1/serializers/onbase-serializer');
@@ -40,8 +41,7 @@ describe('Test onbase-dao', () => {
     */
   const testLineErrorResult = (result) => result.should
     .eventually.be.rejectedWith(testData.errorLineLength)
-    .and.be.an.instanceOf(Error);
-
+    .and.be.an.instanceOf(createError.NotFound);
 
   beforeEach(() => {
     const serializeOnBaseStub = sinon.stub(onBaseSerializer, 'serializeOnBase');
