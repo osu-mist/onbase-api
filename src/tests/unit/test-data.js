@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 const fakeId = 'fakeId';
-const fakeBaseUrl = 'https://localhost/v1';
+const fakeBaseUrl = '/v1';
 // defined as 'last' because a status = 1 will cause getLines() recursion to end
 const outBindsLast = {
   rows: [{}],

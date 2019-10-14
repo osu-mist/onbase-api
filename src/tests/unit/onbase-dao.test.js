@@ -1,9 +1,12 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import config from 'config';
 import proxyquire from 'proxyquire';
 import sinon from 'sinon';
 import createError from 'http-errors';
 
+// config must be replaced before connection can be imported
+sinon.replace(config, 'get', () => ({ oracledb: {} }));
 const conn = require('api/v1/db/oracledb/connection');
 const onBaseSerializer = require('api/v1/serializers/onbase-serializer');
 const testData = require('./test-data');
