@@ -25,23 +25,46 @@ describe('Test onbase-dao', () => {
     });
   };
 
-  const testSingleResult = (result) => result.should
-    .eventually.be.fulfilled
-    .and.deep.equals([{}])
-    .and.to.have.length(1);
+  const testSingleResult = (testFunction) => {
+    const execStub = sinon.stub();
+    execStub.returns(testData.outBindsLast);
+    connectionStub(execStub);
 
-  const testMultipleResults = (result) => result.should
-    .eventually.be.fulfilled
-    .and.deep.equals([{}, {}])
-    .and.to.have.length(2);
+    const result = testFunction();
+    return result.should
+      .eventually.be.fulfilled
+      .and.deep.equals([{}])
+      .and.to.have.length(1);
+  };
+
+  const testMultipleResults = (testFunction) => {
+    const execStub = sinon.stub();
+    // third call is a special case that we want to cause getLine to recurse
+    execStub.onThirdCall().returns(testData.outBindsRecursive);
+    execStub.returns(testData.outBindsLast);
+    connectionStub(execStub);
+
+    const result = testFunction();
+    return result.should
+      .eventually.be.fulfilled
+      .and.deep.equals([{}, {}])
+      .and.to.have.length(2);
+  };
 
   /*
     * error message will be the same as the line length
     * because we are generating an array of numbers
     */
-  const testLineErrorResult = (result) => result.should
-    .eventually.be.rejectedWith(testData.errorLineLength)
-    .and.be.an.instanceOf(createError.NotFound);
+  const testLineErrorResult = (testFunction) => {
+    const execStub = sinon.stub();
+    execStub.returns(testData.outBindsError);
+    connectionStub(execStub);
+
+    const result = testFunction();
+    return result.should
+      .eventually.be.rejectedWith(testData.errorLineLength)
+      .and.be.an.instanceOf(createError.NotFound);
+  };
 
   beforeEach(() => {
     const serializeOnBaseStub = sinon.stub(onBaseSerializer, 'serializeOnBase');
@@ -56,65 +79,21 @@ describe('Test onbase-dao', () => {
   afterEach(() => sinon.restore());
 
   describe('Test getOnBase', () => {
-    it('getOnBase should be fulfilled with a single result', () => {
-      const execStub = sinon.stub();
-      execStub.returns(testData.outBindsLast);
-      connectionStub(execStub);
+    const getFunction = () => onBaseDao.getOnBase();
+    it('getOnBase should be fulfilled with a single result', () => testSingleResult(getFunction));
 
-      const result = onBaseDao.getOnBase();
-      return testSingleResult(result);
-    });
+    it('getOnBase should be fulfilled with multiple results', () => testMultipleResults(getFunction));
 
-    it('getOnBase should be fulfilled with multiple results', () => {
-      const execStub = sinon.stub();
-      // third call is a special case that we want to cause getLine to recurse
-      execStub.onThirdCall().returns(testData.outBindsRecursive);
-      execStub.returns(testData.outBindsLast);
-      connectionStub(execStub);
-
-      const result = onBaseDao.getOnBase();
-      return testMultipleResults(result);
-    });
-
-    it(`getOnBase should throw error when line length is >= ${testData.errorLineLength - 1}`, () => {
-      const execStub = sinon.stub();
-      execStub.returns(testData.outBindsError);
-      connectionStub(execStub);
-
-      const result = onBaseDao.getOnBase();
-      return testLineErrorResult(result);
-    });
+    it(`getOnBase should throw error when line length is >= ${testData.errorLineLength - 1}`, () => testLineErrorResult(getFunction));
   });
 
   describe('Test patchOnBase', () => {
-    it('patchOnBase should be fulfilled with a single result', () => {
-      const execStub = sinon.stub();
-      execStub.returns(testData.outBindsLast);
-      connectionStub(execStub);
+    const patchFunction = () => onBaseDao.patchOnBase(testData.fakeId, testData.patchBody);
+    it('patchOnBase should be fulfilled with a single result', () => testSingleResult(patchFunction));
 
-      const result = onBaseDao.patchOnBase(testData.fakeId, testData.patchBody);
-      return testSingleResult(result);
-    });
+    it('patchOnBase should be fulfilled with multiple results', () => testMultipleResults(patchFunction));
 
-    it('patchOnBase should be fulfilled with multiple results', () => {
-      const execStub = sinon.stub();
-      // third call is a special case that we want to cause getLine to recurse
-      execStub.onThirdCall().returns(testData.outBindsRecursive);
-      execStub.returns(testData.outBindsLast);
-      connectionStub(execStub);
-
-      const result = onBaseDao.patchOnBase(testData.fakeId, testData.patchBody);
-      return testMultipleResults(result);
-    });
-
-    it(`patchOnBase should throw error when line length is >= ${testData.errorLineLength - 1}`, () => {
-      const execStub = sinon.stub();
-      execStub.returns(testData.outBindsError);
-      connectionStub(execStub);
-
-      const result = onBaseDao.patchOnBase(testData.fakeId, testData.patchBody);
-      return testLineErrorResult(result);
-    });
+    it(`patchOnBase should throw error when line length is >= ${testData.errorLineLength - 1}`, () => testLineErrorResult(patchFunction));
 
     it('patchOnBase should throw error with improper body', () => {
       const result = onBaseDao.patchOnBase(testData.fakeId, testData.invalidPatchBody);
