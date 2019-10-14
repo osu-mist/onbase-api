@@ -34,6 +34,15 @@ describe('Test onbase-dao', () => {
     .and.deep.equals([{}, {}])
     .and.to.have.length(2);
 
+  /*
+    * error message will be the same as the line length
+    * because we are generating an array of numbers
+    */
+  const testLineErrorResult = (result) => result.should
+    .eventually.be.rejectedWith(testData.errorLineLength)
+    .and.be.an.instanceOf(Error);
+
+
   beforeEach(() => {
     const serializeOnBaseStub = sinon.stub(onBaseSerializer, 'serializeOnBase');
     serializeOnBaseStub.returnsArg(0);
@@ -73,13 +82,7 @@ describe('Test onbase-dao', () => {
       connectionStub(execStub);
 
       const result = onBaseDao.getOnBase();
-      /*
-       * error message will be the same as the line length
-       * because we are generating an array of numbers
-       */
-      return result.should
-        .eventually.be.rejectedWith(testData.errorLineLength)
-        .and.be.an.instanceOf(Error);
+      testLineErrorResult(result);
     });
   });
 
@@ -110,13 +113,7 @@ describe('Test onbase-dao', () => {
       connectionStub(execStub);
 
       const result = onBaseDao.patchOnBase(testData.fakeId, testData.patchBody);
-      /*
-       * error message will be the same as the line length
-       * because we are generating an array of numbers
-       */
-      return result.should
-        .eventually.be.rejectedWith(testData.errorLineLength)
-        .and.be.an.instanceOf(Error);
+      return testLineErrorResult(result);
     });
 
     it('patchOnBase should throw error with improper body', () => {
