@@ -76,13 +76,13 @@ describe('Test onbase-dao', () => {
       return testMultipleResults(result);
     });
 
-    it('getOnBase should throw error when line length is >= 16', () => {
+    it(`getOnBase should throw error when line length is >= ${testData.errorLineLength - 1}`, () => {
       const execStub = sinon.stub();
       execStub.returns(testData.outBindsError);
       connectionStub(execStub);
 
       const result = onBaseDao.getOnBase();
-      testLineErrorResult(result);
+      return testLineErrorResult(result);
     });
   });
 
@@ -107,7 +107,7 @@ describe('Test onbase-dao', () => {
       return testMultipleResults(result);
     });
 
-    it('patchOnBase should throw error when line length is >= 16', () => {
+    it(`patchOnBase should throw error when line length is >= ${testData.errorLineLength - 1}`, () => {
       const execStub = sinon.stub();
       execStub.returns(testData.outBindsError);
       connectionStub(execStub);
