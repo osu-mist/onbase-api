@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 const fakeId = 'fakeId';
 const fakeBaseUrl = 'https://localhost/v1';
 // defined as 'last' because a status = 1 will cause getLines() recursion to end
@@ -13,6 +15,19 @@ const outBindsRecursive = {
   outBinds: {
     line: {},
     status: 0,
+  },
+};
+
+/*
+ * The 16th element of 'line' returned by execute contains an error
+ * length of 17 makes an array 0-16
+ * _.range() creates a string '0;1;...15;16'
+ */
+const errorLineLength = 17;
+const outBindsError = {
+  outBinds: {
+    lines: _.range(errorLineLength).join(';'),
+    status: 1,
   },
 };
 
@@ -35,6 +50,8 @@ export {
   fakeBaseUrl,
   outBindsLast,
   outBindsRecursive,
+  outBindsError,
+  errorLineLength,
   patchBody,
   invalidPatchBody,
   rawOnBase,

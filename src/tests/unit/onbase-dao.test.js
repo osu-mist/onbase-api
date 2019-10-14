@@ -1,6 +1,5 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import _ from 'lodash';
 import proxyquire from 'proxyquire';
 import sinon from 'sinon';
 
@@ -65,20 +64,17 @@ describe('Test onbase-dao', () => {
     });
 
     it('getOnBase should throw error when line length is >= 16', () => {
-      /*
-       * The 16th element of 'line' returned by execute contains an error
-       * length of 17 makes an array 0-16
-       */
-      const lineLength = 17;
-      // creates a string '0;1;...15;16'
-      const line = _.range(lineLength).join(';');
       const execStub = sinon.stub();
-      execStub.returns({ outBinds: { line, status: 1 } });
+      execStub.returns(testData.outBindsError);
       connectionStub(execStub);
 
       const result = onBaseDao.getOnBase();
+      /*
+       * error message will be the same as the line length
+       * because we are generating an array of numbers
+       */
       return result.should
-        .eventually.be.rejectedWith(lineLength) // error message will be whatever is 16th element
+        .eventually.be.rejectedWith(testData.errorLineLength)
         .and.be.an.instanceOf(Error);
     });
   });
@@ -111,16 +107,17 @@ describe('Test onbase-dao', () => {
     });
 
     it('patchOnBase should throw error when line length is >= 16', () => {
-      // The 16th element of 'line' returned by execute contains an error
-      const lineLength = 17; // length of 17 makes an array 0-16
-      const line = [...Array(lineLength).keys()].join(';'); // creates a string '0;1;...15;16'
       const execStub = sinon.stub();
-      execStub.returns({ outBinds: { line, status: 1 } });
+      execStub.returns(testData.outBindsError);
       connectionStub(execStub);
 
       const result = onBaseDao.patchOnBase(testData.fakeId, testData.patchBody);
+      /*
+       * error message will be the same as the line length
+       * because we are generating an array of numbers
+       */
       return result.should
-        .eventually.be.rejectedWith(lineLength) // error message will be whatever is 16th element
+        .eventually.be.rejectedWith(testData.errorLineLength)
         .and.be.an.instanceOf(Error);
     });
 
