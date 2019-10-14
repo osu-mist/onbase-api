@@ -24,6 +24,16 @@ describe('Test onbase-dao', () => {
     });
   };
 
+  const testSingleResult = (result) => result.should
+    .eventually.be.fulfilled
+    .and.deep.equals([{}])
+    .and.to.have.length(1);
+
+  const testMultipleResults = (result) => result.should
+    .eventually.be.fulfilled
+    .and.deep.equals([{}, {}])
+    .and.to.have.length(2);
+
   beforeEach(() => {
     const serializeOnBaseStub = sinon.stub(onBaseSerializer, 'serializeOnBase');
     serializeOnBaseStub.returnsArg(0);
@@ -43,10 +53,7 @@ describe('Test onbase-dao', () => {
       connectionStub(execStub);
 
       const result = onBaseDao.getOnBase();
-      return result.should
-        .eventually.be.fulfilled
-        .and.deep.equals([{}])
-        .and.to.have.length(1);
+      return testSingleResult(result);
     });
 
     it('getOnBase should be fulfilled with multiple results', () => {
@@ -57,10 +64,7 @@ describe('Test onbase-dao', () => {
       connectionStub(execStub);
 
       const result = onBaseDao.getOnBase();
-      return result.should
-        .eventually.be.fulfilled
-        .and.deep.equals([{}, {}])
-        .and.to.have.length(2);
+      return testMultipleResults(result);
     });
 
     it('getOnBase should throw error when line length is >= 16', () => {
@@ -86,10 +90,7 @@ describe('Test onbase-dao', () => {
       connectionStub(execStub);
 
       const result = onBaseDao.patchOnBase(testData.fakeId, testData.patchBody);
-      return result.should
-        .eventually.be.fulfilled
-        .and.deep.equals([{}])
-        .and.to.have.length(1);
+      return testSingleResult(result);
     });
 
     it('patchOnBase should be fulfilled with multiple results', () => {
@@ -100,10 +101,7 @@ describe('Test onbase-dao', () => {
       connectionStub(execStub);
 
       const result = onBaseDao.patchOnBase(testData.fakeId, testData.patchBody);
-      return result.should
-        .eventually.be.fulfilled
-        .and.deep.equals([{}, {}])
-        .and.to.have.length(2);
+      return testMultipleResults(result);
     });
 
     it('patchOnBase should throw error when line length is >= 16', () => {
