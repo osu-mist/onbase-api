@@ -5,11 +5,7 @@ import createError from 'http-errors';
 import proxyquire from 'proxyquire';
 import sinon from 'sinon';
 
-// config must be replaced before connection can be imported
-sinon.replace(config, 'get', () => ({ oracledb: {} }));
-const conn = require('api/v1/db/oracledb/connection');
-const onBaseSerializer = require('api/v1/serializers/onbase-serializer');
-const testData = require('./test-data');
+import * as testData from './test-data';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -17,21 +13,32 @@ chai.use(chaiAsPromised);
 let onBaseDao;
 
 describe('Test onbase-dao', () => {
+  sinon.replace(config, 'get', () => ({ oracledb: {} }));
+
   /*
-   * The execute function gets called for a variety of reasons in the class being tested
-   * Each test will need fine tuned control over what is returned from execute
+   * ES6 imports now require us to proxyquire the connection class
+   * connection needs to be stubbed differently depending on the test
+   * therefore proxyquire must be a function called by each test instead of in beforeEach
    */
-  const connectionStub = (execStub) => {
-    sinon.stub(conn, 'getConnection').resolves({
-      execute: execStub,
-      close: () => null,
+  const proxyOnBaseDao = (execStub) => {
+    const serializeOnBaseStub = sinon.stub().returnsArg(0);
+    onBaseDao = proxyquire('api/v1/db/oracledb/onbase-dao', {
+      './connection': {
+        getConnection: sinon.stub().resolves({
+          execute: execStub,
+          close: () => null,
+        }),
+      },
+      '../../serializers/onbase-serializer': {
+        serializeOnBase: serializeOnBaseStub,
+      },
     });
   };
 
   const testSingleResult = (testFunction) => {
     const execStub = sinon.stub();
     execStub.returns(testData.outBindsLast);
-    connectionStub(execStub);
+    proxyOnBaseDao(execStub);
 
     const result = testFunction();
     return result.should
@@ -45,7 +52,7 @@ describe('Test onbase-dao', () => {
     // third call is a special case that we want to cause getLine to recurse
     execStub.onThirdCall().returns(testData.outBindsRecursive);
     execStub.returns(testData.outBindsLast);
-    connectionStub(execStub);
+    proxyOnBaseDao(execStub);
 
     const result = testFunction();
     return result.should
@@ -61,7 +68,7 @@ describe('Test onbase-dao', () => {
   const testLineErrorResult = (testFunction) => {
     const execStub = sinon.stub();
     execStub.returns(testData.outBindsError);
-    connectionStub(execStub);
+    proxyOnBaseDao(execStub);
 
     const result = testFunction();
     return result.should
@@ -69,16 +76,6 @@ describe('Test onbase-dao', () => {
       .and.be.an.instanceOf(createError.NotFound);
   };
 
-  beforeEach(() => {
-    const serializeOnBaseStub = sinon.stub(onBaseSerializer, 'serializeOnBase');
-    serializeOnBaseStub.returnsArg(0);
-
-    onBaseDao = proxyquire('api/v1/db/oracledb/onbase-dao', {
-      '../../serializers/onbase-serializer': {
-        serializeOnBase: serializeOnBaseStub,
-      },
-    });
-  });
   afterEach(() => sinon.restore());
 
   describe('Test getOnBase', () => {
