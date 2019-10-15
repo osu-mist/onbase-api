@@ -15,12 +15,20 @@ let onBaseDao;
 describe('Test onbase-dao', () => {
   sinon.replace(config, 'get', () => ({ oracledb: {} }));
 
-  /*
+  /**
    * ES6 imports now require us to proxyquire the connection class
    * connection needs to be stubbed differently depending on the test
    * therefore proxyquire must be a function called by each test instead of in beforeEach
+   *
+   * @param {object} execReturn value returned from execute on getConnection
+   * @param {object} execStub optional parameter to pass in predefined execute function stub
    */
-  const proxyOnBaseDao = (execStub) => {
+  const proxyOnBaseDao = (execReturn, execStub) => {
+    if (execStub) {
+      execStub.returns(execReturn);
+    } else {
+      execStub = sinon.stub().returns(execReturn);
+    }
     const serializeOnBaseStub = sinon.stub().returnsArg(0);
     onBaseDao = proxyquire('api/v1/db/oracledb/onbase-dao', {
       './connection': {
@@ -36,9 +44,7 @@ describe('Test onbase-dao', () => {
   };
 
   const testSingleResult = (testFunction) => {
-    const execStub = sinon.stub();
-    execStub.returns(testData.outBindsLast);
-    proxyOnBaseDao(execStub);
+    proxyOnBaseDao(testData.outBindsLast);
 
     const result = testFunction();
     return result.should
@@ -51,8 +57,7 @@ describe('Test onbase-dao', () => {
     const execStub = sinon.stub();
     // third call is a special case that we want to cause getLine to recurse
     execStub.onThirdCall().returns(testData.outBindsRecursive);
-    execStub.returns(testData.outBindsLast);
-    proxyOnBaseDao(execStub);
+    proxyOnBaseDao(testData.outBindsLast, execStub);
 
     const result = testFunction();
     return result.should
@@ -66,9 +71,7 @@ describe('Test onbase-dao', () => {
    * because we are generating an array of numbers
    */
   const testLineErrorResult = (testFunction) => {
-    const execStub = sinon.stub();
-    execStub.returns(testData.outBindsError);
-    proxyOnBaseDao(execStub);
+    proxyOnBaseDao(testData.outBindsError);
 
     const result = testFunction();
     return result.should
