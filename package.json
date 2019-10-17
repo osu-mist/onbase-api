@@ -63,6 +63,7 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chai-exclude": "^2.0.2",
+    "chai-subset": "^1.6.0",
     "del": "^5.0.0",
     "eslint": "^6.2.1",
     "eslint-config-airbnb-base": "^14.0.0",
