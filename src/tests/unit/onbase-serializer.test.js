@@ -3,8 +3,8 @@ import chaiAsPromised from 'chai-as-promised';
 import chaiSubset from 'chai-subset';
 import _ from 'lodash';
 
-import { openapi } from 'utils/load-openapi';
 import * as onBaseSerializer from 'api/v1/serializers/onbase-serializer';
+import { openapi } from 'utils/load-openapi';
 import * as testData from './test-data';
 
 chai.use(chaiAsPromised);
