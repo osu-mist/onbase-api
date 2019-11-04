@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import { errorBuilder, errorHandler } from 'errors/errors';
 
-import * as onBaseDao from '../../db/oracledb/onbase-dao';
+import * as onBaseDao from '../../../db/oracledb/onbase-dao';
 
 /**
  * Helper function to build error

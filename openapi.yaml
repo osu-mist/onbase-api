@@ -22,11 +22,12 @@ consumes:
 produces:
   - application/json
 paths:
-  /onbase/{osuId}:
+  /onbase/admissions/{osuId}:
     get:
       summary: Return a recordset of application data for an OSU ID
       tags:
         - onBase
+        - admissions
       description: Return a recordset of application data for an OSU ID
       operationId: getApplications
       parameters:
@@ -36,7 +37,7 @@ paths:
         '200':
           description: Successful response
           schema:
-            $ref: '#/definitions/OnBaseResult'
+            $ref: '#/definitions/AdmissionsResult'
         '404':
           description: Person record for an OSU ID not found
           schema:
@@ -49,17 +50,18 @@ paths:
       summary: Update an existing application
       tags:
         - onBase
+        - admissions
       description: Update an existing application by application ID
       operationId: patchApplicationById
       parameters:
         - $ref: '#/parameters/authorization'
         - $ref: '#/parameters/osuId'
-        - $ref: '#/parameters/processDocumentBody'
+        - $ref: '#/parameters/admissionPatchBody'
       responses:
         '200':
           description: Successful response
           schema:
-            $ref: '#/definitions/OnBaseResult'
+            $ref: '#/definitions/AdmissionsResult'
         '400':
           description: Bad request
           schema:
@@ -91,8 +93,8 @@ parameters:
     required: true
     description: OSU ID of a person
     pattern: '^\d{9}$'
-  processDocumentBody:
-    name: processDocumentBody
+  admissionPatchBody:
+    name: admissionPatchBody
     in: body
     schema:
       type: object
@@ -104,8 +106,7 @@ parameters:
               description: OSU ID of a person
               pattern: '^\d{9}$'
             type:
-              type: string
-              enum: [onBase]
+              $ref: '#/definitions/AdmissionType'
             attributes:
               properties:
                 onBaseDocumentType:
@@ -209,15 +210,14 @@ definitions:
         type: boolean
         description: Advance standing indicator
         example: true
-  OnBaseResource:
+  AdmissionResource:
     properties:
       id:
         type: string
         description: OSU ID of a person
         pattern: '^\d{9}$'
       type:
-        type: string
-        enum: [onBase]
+        $ref: '#/definitions/AdmissionType'
       attributes:
         properties:
           applications:
@@ -226,12 +226,15 @@ definitions:
               $ref: '#/definitions/Application'
       links:
         $ref: '#/definitions/SelfLink'
-  OnBaseResult:
+  AdmissionsResult:
     properties:
       links:
         $ref: '#/definitions/SelfLink'
       data:
-        $ref: '#/definitions/OnBaseResource'
+        $ref: '#/definitions/AdmissionResource'
+  AdmissionType:
+    type: string
+    enum: [admissions]
   ErrorObject:
     properties:
       status:
