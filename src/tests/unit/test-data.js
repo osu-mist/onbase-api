@@ -31,16 +31,16 @@ const outBindsError = {
   },
 };
 
-const patchBody = {
+const admissionPatchBody = {
   data: {
     id: fakeId,
     type: 'onBase',
     attributes: {},
   },
 };
-const invalidPatchBody = {};
+const invalidAdmissionPatchBody = {};
 
-const rawOnBase = [
+const rawAdmission = [
   '201901;3;D;20-MAY-2019;AT;20-MAY-2019;02;DSC;T;RA;20-MAY-2019;true;true;SOP8;true',
   '201901;3;D;20-MAY-2019;AT;20-MAY-2019;02;DSC;T;RA;20-MAY-2019;true;true;SOP8;true',
 ];
@@ -52,7 +52,7 @@ export {
   outBindsRecursive,
   outBindsError,
   errorLineLength,
-  patchBody,
-  invalidPatchBody,
-  rawOnBase,
+  admissionPatchBody,
+  invalidAdmissionPatchBody,
+  rawAdmission,
 };

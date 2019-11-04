@@ -37,7 +37,7 @@ paths:
         '200':
           description: Successful response
           schema:
-            $ref: '#/definitions/AdmissionsResult'
+            $ref: '#/definitions/AdmissionResult'
         '404':
           description: Person record for an OSU ID not found
           schema:
@@ -61,7 +61,7 @@ paths:
         '200':
           description: Successful response
           schema:
-            $ref: '#/definitions/AdmissionsResult'
+            $ref: '#/definitions/AdmissionResult'
         '400':
           description: Bad request
           schema:
@@ -226,7 +226,7 @@ definitions:
               $ref: '#/definitions/Application'
       links:
         $ref: '#/definitions/SelfLink'
-  AdmissionsResult:
+  AdmissionResult:
     properties:
       links:
         $ref: '#/definitions/SelfLink'

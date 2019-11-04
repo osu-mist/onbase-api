@@ -29,7 +29,7 @@ describe('Test onbase-dao', () => {
     } else {
       execStub = sinon.stub().returns(execReturn);
     }
-    const serializeOnBaseStub = sinon.stub().returnsArg(0);
+    const serializeAdmissionStub = sinon.stub().returnsArg(0);
     onBaseDao = proxyquire('api/v1/db/oracledb/onbase-dao', {
       './connection': {
         getConnection: sinon.stub().resolves({
@@ -38,7 +38,7 @@ describe('Test onbase-dao', () => {
         }),
       },
       '../../serializers/onbase-serializer': {
-        serializeOnBase: serializeOnBaseStub,
+        serializeAdmission: serializeAdmissionStub,
       },
     });
   };
@@ -81,25 +81,25 @@ describe('Test onbase-dao', () => {
 
   afterEach(() => sinon.restore());
 
-  describe('Test getOnBase', () => {
-    const getFunction = () => onBaseDao.getOnBase();
-    it('getOnBase should be fulfilled with a single result', () => testSingleResult(getFunction));
+  describe('Test getAdmission', () => {
+    const getFunction = () => onBaseDao.getAdmission();
+    it('getAdmission should be fulfilled with a single result', () => testSingleResult(getFunction));
 
-    it('getOnBase should be fulfilled with multiple results', () => testMultipleResults(getFunction));
+    it('getAdmission should be fulfilled with multiple results', () => testMultipleResults(getFunction));
 
-    it(`getOnBase should throw error when line length is >= ${testData.errorLineLength - 1}`, () => testLineErrorResult(getFunction));
+    it(`getAdmission should throw error when line length is >= ${testData.errorLineLength - 1}`, () => testLineErrorResult(getFunction));
   });
 
-  describe('Test patchOnBase', () => {
-    const patchFunction = () => onBaseDao.patchOnBase(testData.fakeId, testData.patchBody);
-    it('patchOnBase should be fulfilled with a single result', () => testSingleResult(patchFunction));
+  describe('Test patchAdmission', () => {
+    const patchFunction = () => onBaseDao.patchAdmission(testData.fakeId, testData.admissionPatchBody);
+    it('patchAdmission should be fulfilled with a single result', () => testSingleResult(patchFunction));
 
-    it('patchOnBase should be fulfilled with multiple results', () => testMultipleResults(patchFunction));
+    it('patchAdmission should be fulfilled with multiple results', () => testMultipleResults(patchFunction));
 
-    it(`patchOnBase should throw error when line length is >= ${testData.errorLineLength - 1}`, () => testLineErrorResult(patchFunction));
+    it(`patchAdmission should throw error when line length is >= ${testData.errorLineLength - 1}`, () => testLineErrorResult(patchFunction));
 
-    it('patchOnBase should throw error with improper body', () => {
-      const result = onBaseDao.patchOnBase(testData.fakeId, testData.invalidPatchBody);
+    it('patchAdmission should throw error with improper body', () => {
+      const result = onBaseDao.patchAdmission(testData.fakeId, testData.invalidPatchBody);
       return result.should
         .eventually.be.rejected
         .and.be.an.instanceOf(Error);
