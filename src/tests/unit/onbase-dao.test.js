@@ -91,7 +91,10 @@ describe('Test onbase-dao', () => {
   });
 
   describe('Test patchAdmission', () => {
-    const patchFunction = () => onBaseDao.patchAdmission(testData.fakeId, testData.admissionPatchBody);
+    const patchFunction = () => onBaseDao.patchAdmission(
+      testData.fakeId,
+      testData.admissionPatchBody,
+    );
     it('patchAdmission should be fulfilled with a single result', () => testSingleResult(patchFunction));
 
     it('patchAdmission should be fulfilled with multiple results', () => testMultipleResults(patchFunction));
