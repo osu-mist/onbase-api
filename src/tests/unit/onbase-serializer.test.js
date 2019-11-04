@@ -15,14 +15,14 @@ describe('Test onbase-serializer', () => {
   const { fakeId, fakeBaseUrl } = testData;
 
   const resourceSubsetSchema = (resourceType, resourceAttributes) => {
-    const selfLink = `${fakeBaseUrl}/${resourceType.toLowerCase()}/${fakeId}`;
+    const selfLink = `${fakeBaseUrl}/onbase/${resourceType.toLowerCase()}/${fakeId}`;
     const schema = {
       links: {
         self: selfLink,
       },
       data: {
         id: fakeId,
-        type: 'onBase',
+        type: 'admissions',
         links: { self: selfLink },
       },
     };
@@ -54,15 +54,15 @@ describe('Test onbase-serializer', () => {
     return result;
   };
 
-  it('Test serializeOnBase', () => {
-    const { serializeOnBase } = onBaseSerializer;
-    const { rawOnBase } = testData;
-    const resourceType = 'onBase';
+  it('Test serializeAdmission', () => {
+    const { serializeAdmission } = onBaseSerializer;
+    const { rawAdmission } = testData;
+    const resourceType = 'admissions';
 
-    const serializedOnBase = serializeOnBase(rawOnBase, fakeId);
-    expect(serializedOnBase).to.containSubset(resourceSubsetSchema(resourceType));
+    const serializedAdmission = serializeAdmission(rawAdmission, fakeId);
+    expect(serializedAdmission).to.containSubset(resourceSubsetSchema(resourceType));
 
-    const { applications } = serializedOnBase.data.attributes;
+    const { applications } = serializedAdmission.data.attributes;
     _.each(applications, (app) => {
       expect(app).to.have.all.keys(_.keys(getDefinitionProps('Application')));
     });

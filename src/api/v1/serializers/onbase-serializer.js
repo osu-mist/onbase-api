@@ -5,10 +5,10 @@ import { serializerOptions } from 'utils/jsonapi';
 import { openapi } from 'utils/load-openapi';
 import { apiBaseUrl, resourcePathLink } from 'utils/uri-builder';
 
-const onBaseResourceProp = openapi.definitions.OnBaseResource.properties;
-const onBaseResourceType = onBaseResourceProp.type.enum[0];
-const onBaseResourceKeys = _.keys(onBaseResourceProp.attributes.properties);
-const onBaseUrl = resourcePathLink(apiBaseUrl, 'onbase');
+const admissionResourceProp = openapi.definitions.AdmissionResource.properties;
+const admissionResourceType = admissionResourceProp.type.enum[0];
+const admissionResourceKeys = _.keys(admissionResourceProp.attributes.properties);
+const admissionUrl = resourcePathLink(apiBaseUrl, 'onbase/admissions');
 
 /**
  * A function to serialize raw data
@@ -17,14 +17,14 @@ const onBaseUrl = resourcePathLink(apiBaseUrl, 'onbase');
  * @param {string} osuId OSU ID
  * @returns {object} Serialized resources data
  */
-const serializeOnBase = (rawRows, osuId) => {
-  const rawOnBase = {
+const serializeAdmission = (rawRows, osuId) => {
+  const rawAdmission = {
     osuId,
-    type: 'onBase',
+    type: 'admissions',
     applications: [],
   };
 
-  rawOnBase.applications = _.map(rawRows, (rawRow) => {
+  rawAdmission.applications = _.map(rawRows, (rawRow) => {
     const array = _.split(rawRow, ';');
     return {
       termCode: array[1],
@@ -47,17 +47,17 @@ const serializeOnBase = (rawRows, osuId) => {
 
   const serializerArgs = {
     identifierField: 'osuId',
-    resourceKeys: onBaseResourceKeys,
-    resourceUrl: onBaseUrl,
-    topLevelSelfLink: resourcePathLink(onBaseUrl, osuId),
+    resourceKeys: admissionResourceKeys,
+    resourceUrl: admissionUrl,
+    topLevelSelfLink: resourcePathLink(admissionUrl, osuId),
     enableDataLinks: true,
-    resourceType: onBaseResourceType,
+    resourceType: admissionResourceType,
   };
 
   return new JsonApiSerializer(
-    onBaseResourceType,
+    admissionResourceType,
     serializerOptions(serializerArgs),
-  ).serialize(rawOnBase);
+  ).serialize(rawAdmission);
 };
 
-export { serializeOnBase };
+export { serializeAdmission };

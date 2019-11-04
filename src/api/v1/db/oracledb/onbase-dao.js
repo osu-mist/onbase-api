@@ -4,7 +4,7 @@ import { BIND_OUT, NUMBER, STRING } from 'oracledb';
 
 import { getConnection } from './connection';
 import { contrib } from './contrib/contrib';
-import { serializeOnBase } from '../../serializers/onbase-serializer';
+import { serializeAdmission } from '../../serializers/onbase-serializer';
 
 /**
  * A Helper function to parse the error string
@@ -61,13 +61,13 @@ const personNotExist = async (connection, osuId) => {
 };
 
 /**
- * Return an OnBase record of a person
+ * Return admission record of a person
  *
  * @param {string} osuId OSU ID
- * @returns {Promise<object|HttpError>} Promise object represents a serialized OnBase record or a
- *                                        HTTP error if error string is not null
+ * @returns {Promise<object|HttpError>} Promise object represents a serialized admission record or a
+ *                                      HTTP error if error string is not null
  */
-const getOnBase = async (osuId) => {
+const getAdmission = async (osuId) => {
   const connection = await getConnection();
   try {
     const errorMessage = await personNotExist(connection, osuId);
@@ -83,23 +83,23 @@ const getOnBase = async (osuId) => {
       throw createError(400, errorString);
     }
 
-    const serializedOnBase = serializeOnBase(lines, osuId);
+    const serializedAdmission = serializeAdmission(lines, osuId);
 
-    return serializedOnBase;
+    return serializedAdmission;
   } finally {
     connection.close();
   }
 };
 
 /**
- * Update an OnBase record of a person
+ * Update admission record of a person
  *
  * @param {string} osuId OSU ID
  * @param {object} body request body
- * @returns {Promise<object|HttpError>} Promise object represents a patched serialized OnBase record
- *                                      or HTTP errors if error string is not null
+ * @returns {Promise<object|HttpError>} Promise object represents a patched serialized admissions
+ *                                      record or HTTP errors if error string is not null
  */
-const patchOnBase = async (osuId, body) => {
+const patchAdmission = async (osuId, body) => {
   const connection = await getConnection();
   const { attributes } = body.data;
   try {
@@ -119,11 +119,11 @@ const patchOnBase = async (osuId, body) => {
       throw createError(400, errorString);
     }
 
-    const serializedOnBase = serializeOnBase(lines, osuId);
-    return serializedOnBase;
+    const serializedAdmission = serializeAdmission(lines, osuId);
+    return serializedAdmission;
   } finally {
     connection.close();
   }
 };
 
-export { getOnBase, patchOnBase };
+export { getAdmission, patchAdmission };

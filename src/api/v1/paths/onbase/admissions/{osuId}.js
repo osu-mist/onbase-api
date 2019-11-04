@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import { errorBuilder, errorHandler } from 'errors/errors';
 
-import * as onBaseDao from '../../db/oracledb/onbase-dao';
+import * as onBaseDao from '../../../db/oracledb/onbase-dao';
 
 /**
  * Helper function to build error
@@ -21,14 +21,14 @@ const buildErrors = (res, err) => {
 };
 
 /**
- * Get an OnBase records for a person
+ * Get an admission record for a person
  *
  * @type {RequestHandler}
  */
 const get = async (req, res) => {
   try {
     const { osuId } = req.params;
-    const result = await onBaseDao.getOnBase(osuId);
+    const result = await onBaseDao.getAdmission(osuId);
     return res.send(result);
   } catch (err) {
     if (err.statusCode) {
@@ -39,7 +39,7 @@ const get = async (req, res) => {
 };
 
 /**
- * Update an OnBase records for a person
+ * Update an admission record for a person
  *
  * @type {RequestHandler}
  */
@@ -50,7 +50,7 @@ const patch = async (req, res) => {
     if (osuId !== body.data.id) {
       return errorBuilder(res, 409, 'OSU ID in path does not match the ID in body.');
     }
-    const result = await onBaseDao.patchOnBase(osuId, body);
+    const result = await onBaseDao.patchAdmission(osuId, body);
     return res.send(result);
   } catch (err) {
     if (err.statusCode) {
