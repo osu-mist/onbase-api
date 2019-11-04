@@ -34,7 +34,7 @@ const outBindsError = {
 const admissionPatchBody = {
   data: {
     id: fakeId,
-    type: 'onBase',
+    type: 'admissions',
     attributes: {},
   },
 };

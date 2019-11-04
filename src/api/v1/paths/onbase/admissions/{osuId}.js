@@ -21,7 +21,7 @@ const buildErrors = (res, err) => {
 };
 
 /**
- * Get admission record for a person
+ * Get an admission record for a person
  *
  * @type {RequestHandler}
  */
@@ -39,7 +39,7 @@ const get = async (req, res) => {
 };
 
 /**
- * Update admission record for a person
+ * Update an admission record for a person
  *
  * @type {RequestHandler}
  */
