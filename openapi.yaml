@@ -24,12 +24,12 @@ produces:
 paths:
   /onbase/admissions/{osuId}:
     get:
-      summary: Return a recordset of application data for an OSU ID
+      summary: Return an admission data for an OSU ID
       tags:
         - onBase
         - admissions
-      description: Return a recordset of application data for an OSU ID
-      operationId: getApplications
+      description: Return an admission data for an OSU ID
+      operationId: getAdmissionById
       parameters:
         - $ref: '#/parameters/authorization'
         - $ref: '#/parameters/osuId'
@@ -47,12 +47,12 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResult'
     patch:
-      summary: Update an existing application
+      summary: Update an existing application of an admission
       tags:
         - onBase
         - admissions
-      description: Update an existing application by application ID
-      operationId: patchApplicationById
+      description: Update an existing application of an admission by ID
+      operationId: patchAdmissionById
       parameters:
         - $ref: '#/parameters/authorization'
         - $ref: '#/parameters/osuId'
