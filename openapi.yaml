@@ -24,11 +24,11 @@ produces:
 paths:
   /onbase/admissions/{osuId}:
     get:
-      summary: Return an admission data for an OSU ID
+      summary: Return an admission for an OSU ID
       tags:
         - onBase
         - admissions
-      description: Return an admission data for an OSU ID
+      description: Return an admission for an OSU ID
       operationId: getAdmissionById
       parameters:
         - $ref: '#/parameters/authorization'
