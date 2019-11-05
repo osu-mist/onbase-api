@@ -205,6 +205,7 @@ parameters:
       required:
         - data
       additionalProperties: false
+    required: true
   financialAidPatchBody:
     name: financialAidPatchBody
     in: body
@@ -241,6 +242,7 @@ parameters:
       required:
         - data
       additionalProperties: false
+    required: true
 definitions:
   SelfLink:
     properties:
