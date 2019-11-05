@@ -92,7 +92,8 @@ paths:
         - $ref: '#/parameters/osuId'
         - in: query
           name: financialAidYear
-          description: Search by financial aid year. For example, 1819
+          description: |
+            Search by financial aid year. Financial aid year is a 4-digit code. For example, for Summer 2018, the value would be 1819
           required: true
           type: string
           pattern: '^\d{4}$'
@@ -228,7 +229,8 @@ parameters:
                   example: FA Last Day Attended
                 financialAidYear:
                   type: string
-                  description: Search terms by financial aid year
+                  description: |
+                   Search terms by financial aid year. Financial aid year is a 4-digit code. For example, for Summer 2018, the value would be 1819
                   example: '1819'
               required:
                 - onBaseDocumentType
@@ -306,7 +308,7 @@ definitions:
         example: true
       uacPendingInd:
         type: boolean
-        description: The indicator shows if the application is strill pending in University Admission Committee
+        description: The indicator shows if the application is still pending in University Admission Committee
         example: true
       startSession:
         type: string
