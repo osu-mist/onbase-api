@@ -79,6 +79,74 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/ErrorResult'
+  /onbase/financial-aid/{osuId}:
+    get:
+      summary: Return financial aid data for an OSU ID
+      tags:
+        - onBase
+        - financialAid
+      description: Return financial aid data for an OSU ID
+      operationId: getFinancialAidById
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/osuId'
+        - in: query
+          name: financialAidYear
+          description: |
+            Search by financial aid year. Financial aid year is a 4-digit code. For example, for Summer 2018, the value would be 1819
+          required: true
+          type: string
+          pattern: '^\d{4}$'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/FinancialAidResult'
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/ErrorResult'
+        '404':
+          description: Person record for an OSU ID not found
+          schema:
+            $ref: '#/definitions/ErrorResult'
+        '500':
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrorResult'
+    patch:
+      summary: Update existing tracking requirements of a financial aid
+      tags:
+        - onBase
+        - financialAid
+      description: Update existing tracking requirement of a financial aid by ID
+      operationId: patchFinancialAidById
+      parameters:
+        - $ref: '#/parameters/authorization'
+        - $ref: '#/parameters/osuId'
+        - $ref: '#/parameters/financialAidPatchBody'
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            $ref: '#/definitions/FinancialAidResult'
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/ErrorResult'
+        '404':
+          description: Person record for an OSU ID not found
+          schema:
+            $ref: '#/definitions/ErrorResult'
+        '409':
+          description: |
+            Conflict error, either type is incorrect or the path ID and body ID are not matched
+          schema:
+            $ref: '#/definitions/ErrorResult'
+        '500':
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrorResult'
 parameters:
   authorization:
     name: Authorization
@@ -112,6 +180,7 @@ parameters:
                 onBaseDocumentType:
                   type: string
                   description: OnBase document type
+                  example: ADMS CHNG- Change Request (TermAndMajor)
                 additionalChecklistInfo:
                   type: string
                   description: Additional checklist information
@@ -137,6 +206,46 @@ parameters:
       required:
         - data
       additionalProperties: false
+    required: true
+  financialAidPatchBody:
+    name: financialAidPatchBody
+    in: body
+    schema:
+      type: object
+      properties:
+        data:
+          properties:
+            id:
+              type: string
+              description: OSU ID of a person
+              pattern: '^\d{9}$'
+            type:
+              $ref: '#/definitions/FinancialAidType'
+            attributes:
+              properties:
+                onBaseDocumentType:
+                  type: string
+                  description: OnBase document type
+                  example: FA Last Day Attended
+                financialAidYear:
+                  type: string
+                  description: |
+                   Search terms by financial aid year. Financial aid year is a 4-digit code. For example, for Summer 2018, the value would be 1819
+                  example: '1819'
+                  pattern: '^\d{4}$'
+              required:
+                - onBaseDocumentType
+                - financialAidYear
+              additionalProperties: false
+          required:
+            - id
+            - type
+            - attributes
+          additionalProperties: false
+      required:
+        - data
+      additionalProperties: false
+    required: true
 definitions:
   SelfLink:
     properties:
@@ -200,7 +309,7 @@ definitions:
         example: true
       uacPendingInd:
         type: boolean
-        description: The indicator shows if the application is strill pending in University Admission Committee
+        description: The indicator shows if the application is still pending in University Admission Committee
         example: true
       startSession:
         type: string
@@ -235,6 +344,51 @@ definitions:
   AdmissionType:
     type: string
     enum: [admissions]
+  TrackingRequirements:
+    properties:
+      financialAidYear:
+        type: string
+        description: Financial aid year. This is a 4-digit code. For example, for Summer 2018, the value would be 1819
+        pattern: '^\d{4}$'
+        example: '1819'
+      trackingRequirement:
+        type: string
+        description: Tracking requirement
+        example: ADMIT
+      trackingStatusCode:
+        type: string
+        description: Tracking status code
+        example: M
+      statusDate:
+        type: string
+        description: The status date in Oracle date format (DD-MON-YYYY HH24:MI:SS)
+        example: '20-MAY-2019 00:00:00'
+        pattern: '^\d{2}-[A-Z]{3}-\d{4} \d{2}:\d{2}:\d{2}$'
+  FinancialAidResource:
+    properties:
+      id:
+        type: string
+        description: OSU ID of a person
+        pattern: '^\d{9}$'
+      type:
+        $ref: '#/definitions/FinancialAidType'
+      attributes:
+        properties:
+          trackingRequirements:
+            type: array
+            items:
+              $ref: '#/definitions/TrackingRequirements'
+      links:
+        $ref: '#/definitions/SelfLink'
+  FinancialAidResult:
+    properties:
+      links:
+        $ref: '#/definitions/SelfLink'
+      data:
+        $ref: '#/definitions/FinancialAidResource'
+  FinancialAidType:
+    type: string
+    enum: [financialAid]
   ErrorObject:
     properties:
       status:
