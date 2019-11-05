@@ -228,7 +228,7 @@ parameters:
                 financialAidYear:
                   type: string
                   description: Search terms by financial aid year
-                  example: 1819
+                  example: '1819'
               required:
                 - onBaseDocumentType
                 - financialAidYear
