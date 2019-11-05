@@ -232,6 +232,7 @@ parameters:
                   description: |
                    Search terms by financial aid year. Financial aid year is a 4-digit code. For example, for Summer 2018, the value would be 1819
                   example: '1819'
+                  pattern: '^\d{4}$'
               required:
                 - onBaseDocumentType
                 - financialAidYear
