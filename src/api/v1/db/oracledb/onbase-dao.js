@@ -182,7 +182,8 @@ const patchFinancialAid = async (osuId, body) => {
     );
     const lines = await getLine(connection, []);
 
-    const errorString = parseErrorString(lines);
+    // The 6th item of the splitted array is the error string
+    const errorString = parseErrorString(lines, 5);
     if (errorString) {
       throw createError(400, errorString);
     }
