@@ -25,7 +25,7 @@ const financialAidUrl = resourcePathLink(apiBaseUrl, 'onbase/financial-aid');
 const serializeAdmission = (rawRows, osuId) => {
   const rawAdmission = {
     osuId,
-    type: 'admissions',
+    type: admissionResourceType,
     applications: [],
   };
 
@@ -75,7 +75,7 @@ const serializeAdmission = (rawRows, osuId) => {
 const serializeFinancialAid = (rawRows, osuId) => {
   const rawFinancialAid = {
     osuId,
-    type: 'financialAid',
+    type: financialAidResourceType,
     trackingRequirements: [],
   };
 

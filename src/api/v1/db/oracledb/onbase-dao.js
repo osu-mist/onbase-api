@@ -111,7 +111,7 @@ const patchAdmission = async (osuId, body) => {
 
     await connection.execute(
       contrib.patchApplications(attributes),
-      _.assign({ osuId }, attributes),
+      { ...{ osuId }, ...attributes },
     );
     const lines = await getLine(connection, []);
 
@@ -178,7 +178,7 @@ const patchFinancialAid = async (osuId, body) => {
 
     await connection.execute(
       contrib.patchTrackingRequirements(attributes),
-      _.assign({ osuId }, attributes),
+      { ...{ osuId }, ...attributes },
     );
     const lines = await getLine(connection, []);
 
