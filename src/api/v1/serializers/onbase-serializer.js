@@ -10,8 +10,13 @@ const admissionResourceType = admissionResourceProp.type.enum[0];
 const admissionResourceKeys = _.keys(admissionResourceProp.attributes.properties);
 const admissionUrl = resourcePathLink(apiBaseUrl, 'onbase/admissions');
 
+const financialAidResourceProp = openapi.definitions.FinancialAidResource.properties;
+const financialAidResourceType = financialAidResourceProp.type.enum[0];
+const financialAidResourceKeys = _.keys(financialAidResourceProp.attributes.properties);
+const financialAidUrl = resourcePathLink(apiBaseUrl, 'onbase/financial-aid');
+
 /**
- * A function to serialize raw data
+ * A function to serialize raw admission data
  *
  * @param {object[]} rawRows Raw data rows from data source
  * @param {string} osuId OSU ID
@@ -60,4 +65,43 @@ const serializeAdmission = (rawRows, osuId) => {
   ).serialize(rawAdmission);
 };
 
-export { serializeAdmission };
+/**
+ * A function to serialize raw financial aid data
+ *
+ * @param {object[]} rawRows Raw data rows from data source
+ * @param {string} osuId OSU ID
+ * @returns {object} Serialized resources data
+ */
+const serializeFinancialAid = (rawRows, osuId) => {
+  const rawFinancialAid = {
+    osuId,
+    type: 'financialAid',
+    trackingRequirements: [],
+  };
+
+  rawFinancialAid.trackingRequirements = _.map(rawRows, (rawRow) => {
+    const array = _.split(rawRow, ';');
+    return {
+      financialAidYear: array[1],
+      trackingRequirement: array[2],
+      trackingStatusCode: array[3],
+      statusDate: array[4],
+    };
+  });
+
+  const serializerArgs = {
+    identifierField: 'osuId',
+    resourceKeys: financialAidResourceKeys,
+    resourceUrl: financialAidUrl,
+    topLevelSelfLink: resourcePathLink(financialAidUrl, osuId),
+    enableDataLinks: true,
+    resourceType: financialAidResourceType,
+  };
+
+  return new JsonApiSerializer(
+    financialAidResourceType,
+    serializerOptions(serializerArgs),
+  ).serialize(rawFinancialAid);
+};
+
+export { serializeAdmission, serializeFinancialAid };

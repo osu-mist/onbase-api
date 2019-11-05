@@ -79,14 +79,14 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/ErrorResult'
-  /onbase/financialAids/{osuId}:
+  /onbase/financial-aid/{osuId}:
     get:
       summary: Return financial aid data for an OSU ID
       tags:
         - onBase
-        - financialAids
+        - financialAid
       description: Return financial aid data for an OSU ID
-      operationId: getFinanciaAidById
+      operationId: getFinancialAidById
       parameters:
         - $ref: '#/parameters/authorization'
         - $ref: '#/parameters/osuId'
@@ -114,12 +114,12 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResult'
     patch:
-      summary: Update an existing tracking requirement of an financial aid
+      summary: Update existing tracking requirements of a financial aid
       tags:
         - onBase
-        - financialAids
-      description: Update an existing tracking requirement of an financial aid by ID
-      operationId: patchFinanciaAidById
+        - financialAid
+      description: Update existing tracking requirement of a financial aid by ID
+      operationId: patchFinancialAidById
       parameters:
         - $ref: '#/parameters/authorization'
         - $ref: '#/parameters/osuId'
@@ -383,7 +383,7 @@ definitions:
         $ref: '#/definitions/FinancialAidResource'
   FinancialAidType:
     type: string
-    enum: [financialAids]
+    enum: [financialAid]
   ErrorObject:
     properties:
       status:

@@ -4,18 +4,18 @@ import { BIND_OUT, NUMBER, STRING } from 'oracledb';
 
 import { getConnection } from './connection';
 import { contrib } from './contrib/contrib';
-import { serializeAdmission } from '../../serializers/onbase-serializer';
+import { serializeAdmission, serializeFinancialAid } from '../../serializers/onbase-serializer';
 
 /**
  * A Helper function to parse the error string
  *
  * @param {string} lines a list of OnBase records
+ * @param {number} errorPosition error position
  * @returns {string} A string represent the error reasons
  */
-const parseErrorString = (lines) => {
+const parseErrorString = (lines, errorPosition) => {
   if (lines.length >= 1) {
-    // The 16th item of the splitted array is the error string
-    return _.split(lines[0], ';')[16];
+    return _.split(lines[0], ';')[errorPosition];
   }
   return undefined;
 };
@@ -78,7 +78,8 @@ const getAdmission = async (osuId) => {
     await connection.execute(contrib.getApplications(), { osuId });
     const lines = await getLine(connection, []);
 
-    const errorString = parseErrorString(lines);
+    // The 17th item of the splitted array is the error string
+    const errorString = parseErrorString(lines, 16);
     if (errorString) {
       throw createError(400, errorString);
     }
@@ -96,7 +97,7 @@ const getAdmission = async (osuId) => {
  *
  * @param {string} osuId OSU ID
  * @param {object} body request body
- * @returns {Promise<object|HttpError>} Promise object represents a patched serialized admissions
+ * @returns {Promise<object|HttpError>} Promise object represents a patched serialized admission
  *                                      record or HTTP errors if error string is not null
  */
 const patchAdmission = async (osuId, body) => {
@@ -114,7 +115,8 @@ const patchAdmission = async (osuId, body) => {
     );
     const lines = await getLine(connection, []);
 
-    const errorString = parseErrorString(lines);
+    // The 17th item of the splitted array is the error string
+    const errorString = parseErrorString(lines, 16);
     if (errorString) {
       throw createError(400, errorString);
     }
@@ -126,4 +128,74 @@ const patchAdmission = async (osuId, body) => {
   }
 };
 
-export { getAdmission, patchAdmission };
+/**
+ * Return financial aid record of a person
+ *
+ * @param {string} osuId OSU ID
+ * @param {string} financialAidYear financial aid year
+ * @returns {Promise<object|HttpError>} Promise object represents a serialized financial aid record
+ *                                      or a HTTP error if error string is not null
+ */
+const getFinancialAid = async (osuId, financialAidYear) => {
+  const connection = await getConnection();
+  try {
+    const errorMessage = await personNotExist(connection, osuId);
+    if (errorMessage) {
+      throw createError(404, errorMessage);
+    }
+
+    await connection.execute(contrib.getTrackingRequirements(), { osuId, financialAidYear });
+    const lines = await getLine(connection, []);
+
+    // The 6th item of the splitted array is the error string
+    const errorString = parseErrorString(lines, 5);
+    if (errorString) {
+      throw createError(400, errorString);
+    }
+
+    return serializeFinancialAid(lines, osuId);
+  } finally {
+    connection.close();
+  }
+};
+
+/**
+ * Update financial aid record of a person
+ *
+ * @param {string} osuId OSU ID
+ * @param {object} body request body
+ * @returns {Promise<object|HttpError>} Promise object represents a patched serialized financial aid
+ *                                      record or HTTP errors if error string is not null
+ */
+const patchFinancialAid = async (osuId, body) => {
+  const connection = await getConnection();
+  const { attributes } = body.data;
+  try {
+    const errorMessage = await personNotExist(connection, osuId);
+    if (errorMessage) {
+      throw createError(404, errorMessage);
+    }
+
+    await connection.execute(
+      contrib.patchTrackingRequirements(attributes),
+      _.assign({ osuId }, attributes),
+    );
+    const lines = await getLine(connection, []);
+
+    const errorString = parseErrorString(lines);
+    if (errorString) {
+      throw createError(400, errorString);
+    }
+
+    return serializeFinancialAid(lines, osuId);
+  } finally {
+    connection.close();
+  }
+};
+
+export {
+  getAdmission,
+  patchAdmission,
+  getFinancialAid,
+  patchFinancialAid,
+};
