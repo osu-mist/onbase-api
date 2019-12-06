@@ -21,6 +21,9 @@ consumes:
   - application/json
 produces:
   - application/json
+security:
+  - OAuth2:
+      - full
 paths:
   /onbase/admissions/{osuId}:
     get:
@@ -76,9 +79,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResult'
         '500':
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/ErrorResult'
+          $ref: '#/responses/500'
   /onbase/financial-aid/{osuId}:
     get:
       summary: Return financial aid data for an OSU ID
@@ -144,9 +145,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResult'
         '500':
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/ErrorResult'
+          $ref: '#/responses/500'
 parameters:
   authorization:
     name: Authorization
@@ -246,6 +245,39 @@ parameters:
         - data
       additionalProperties: false
     required: true
+  pageNumber:
+    name: page[number]
+    in: query
+    type: integer
+    required: false
+    description: Page number of results
+    default: 1
+    minimum: 1
+  pageSize:
+    name: page[size]
+    in: query
+    type: integer
+    required: false
+    description: Number of results to return
+    default: 25
+    maximum: 500
+    minimum: 1
+responses:
+  '400':
+     description: Bad request
+     schema:
+       $ref: '#/definitions/ErrorResult'
+  '500':
+     description: Internal server error
+     schema:
+       $ref: '#/definitions/ErrorResult'
+securityDefinitions:
+  OAuth2:
+    type: oauth2
+    flow: application
+    tokenUrl: https://api.oregonstate.edu/oauth2/token
+    scopes:
+      full: Full access to the API
 definitions:
   SelfLink:
     properties:
