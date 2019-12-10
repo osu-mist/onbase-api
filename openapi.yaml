@@ -34,7 +34,6 @@ paths:
       description: Return an admission for an OSU ID
       operationId: getAdmissionById
       parameters:
-        - $ref: '#/parameters/authorization'
         - $ref: '#/parameters/osuId'
       responses:
         '200':
@@ -57,7 +56,6 @@ paths:
       description: Update an existing application of an admission by ID
       operationId: patchAdmissionById
       parameters:
-        - $ref: '#/parameters/authorization'
         - $ref: '#/parameters/osuId'
         - $ref: '#/parameters/admissionPatchBody'
       responses:
@@ -89,7 +87,6 @@ paths:
       description: Return financial aid data for an OSU ID
       operationId: getFinancialAidById
       parameters:
-        - $ref: '#/parameters/authorization'
         - $ref: '#/parameters/osuId'
         - in: query
           name: financialAidYear
@@ -123,7 +120,6 @@ paths:
       description: Update existing tracking requirement of a financial aid by ID
       operationId: patchFinancialAidById
       parameters:
-        - $ref: '#/parameters/authorization'
         - $ref: '#/parameters/osuId'
         - $ref: '#/parameters/financialAidPatchBody'
       responses:
