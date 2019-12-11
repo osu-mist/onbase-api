@@ -21,6 +21,9 @@ consumes:
   - application/json
 produces:
   - application/json
+security:
+  - OAuth2:
+      - full
 paths:
   /onbase/admissions/{osuId}:
     get:
@@ -31,7 +34,6 @@ paths:
       description: Return an admission for an OSU ID
       operationId: getAdmissionById
       parameters:
-        - $ref: '#/parameters/authorization'
         - $ref: '#/parameters/osuId'
       responses:
         '200':
@@ -54,7 +56,6 @@ paths:
       description: Update an existing application of an admission by ID
       operationId: patchAdmissionById
       parameters:
-        - $ref: '#/parameters/authorization'
         - $ref: '#/parameters/osuId'
         - $ref: '#/parameters/admissionPatchBody'
       responses:
@@ -76,9 +77,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResult'
         '500':
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/ErrorResult'
+          $ref: '#/responses/500'
   /onbase/financial-aid/{osuId}:
     get:
       summary: Return financial aid data for an OSU ID
@@ -88,7 +87,6 @@ paths:
       description: Return financial aid data for an OSU ID
       operationId: getFinancialAidById
       parameters:
-        - $ref: '#/parameters/authorization'
         - $ref: '#/parameters/osuId'
         - in: query
           name: financialAidYear
@@ -122,7 +120,6 @@ paths:
       description: Update existing tracking requirement of a financial aid by ID
       operationId: patchFinancialAidById
       parameters:
-        - $ref: '#/parameters/authorization'
         - $ref: '#/parameters/osuId'
         - $ref: '#/parameters/financialAidPatchBody'
       responses:
@@ -144,9 +141,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResult'
         '500':
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/ErrorResult'
+          $ref: '#/responses/500'
 parameters:
   authorization:
     name: Authorization
@@ -246,6 +241,22 @@ parameters:
         - data
       additionalProperties: false
     required: true
+responses:
+  '400':
+     description: Bad request
+     schema:
+       $ref: '#/definitions/ErrorResult'
+  '500':
+     description: Internal server error
+     schema:
+       $ref: '#/definitions/ErrorResult'
+securityDefinitions:
+  OAuth2:
+    type: oauth2
+    flow: application
+    tokenUrl: https://api.oregonstate.edu/oauth2/token
+    scopes:
+      full: Full access to the API
 definitions:
   SelfLink:
     properties:
