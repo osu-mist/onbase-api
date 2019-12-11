@@ -81,6 +81,7 @@ describe('Test onbase-dao', () => {
 
   afterEach(() => sinon.restore());
 
+  proxyOnBaseDao();
   describe('Test getAdmission', () => {
     const getFunction = () => onBaseDao.getAdmission();
     it('getAdmission should be fulfilled with a single result', () => testSingleResult(getFunction));
