@@ -13,9 +13,10 @@ chai.use(chaiAsPromised);
 let onBaseDao;
 
 describe('Test onbase-dao', () => {
-  before(() => {
+  beforeEach(() => {
     sinon.replace(config, 'get', () => ({ oracledb: {} }));
   });
+  afterEach(() => sinon.restore());
 
   /**
    * ES6 imports now require us to proxyquire the connection class
@@ -80,8 +81,6 @@ describe('Test onbase-dao', () => {
       .eventually.be.rejectedWith(testData.errorLineLength)
       .and.be.an.instanceOf(createError.NotFound);
   };
-
-  afterEach(() => sinon.restore());
 
   describe('Test getAdmission', () => {
     const getFunction = () => onBaseDao.getAdmission();
