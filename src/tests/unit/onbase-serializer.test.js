@@ -1,9 +1,11 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import chaiSubset from 'chai-subset';
+import config from 'config';
 import _ from 'lodash';
+import proxyquire from 'proxyquire';
+import sinon from 'sinon';
 
-import * as onBaseSerializer from 'api/v1/serializers/onbase-serializer';
 import { openapi } from 'utils/load-openapi';
 import * as testData from './test-data';
 
@@ -11,8 +13,16 @@ chai.use(chaiAsPromised);
 chai.use(chaiSubset);
 const { expect } = chai;
 
+let onBaseSerializer;
+
 describe('Test onbase-serializer', () => {
   const { fakeId, fakeBaseUrl } = testData;
+
+  before(() => {
+    sinon.replace(config, 'get', () => ({ oracledb: {} }));
+    onBaseSerializer = proxyquire('api/v1/serializers/onbase-serializer', {});
+  });
+  after(() => sinon.restore());
 
   const resourceSubsetSchema = (resourceType, resourceAttributes) => {
     const selfLink = `${fakeBaseUrl}/onbase/${resourceType.toLowerCase()}/${fakeId}`;
