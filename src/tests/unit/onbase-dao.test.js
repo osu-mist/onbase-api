@@ -13,7 +13,9 @@ chai.use(chaiAsPromised);
 let onBaseDao;
 
 describe('Test onbase-dao', () => {
-  sinon.replace(config, 'get', () => ({ oracledb: {} }));
+  before(() => {
+    sinon.replace(config, 'get', () => ({ oracledb: {} }));
+  });
 
   /**
    * ES6 imports now require us to proxyquire the connection class
@@ -81,7 +83,6 @@ describe('Test onbase-dao', () => {
 
   afterEach(() => sinon.restore());
 
-  proxyOnBaseDao();
   describe('Test getAdmission', () => {
     const getFunction = () => onBaseDao.getAdmission();
     it('getAdmission should be fulfilled with a single result', () => testSingleResult(getFunction));
