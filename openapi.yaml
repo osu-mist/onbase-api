@@ -331,9 +331,9 @@ definitions:
         description: Advance standing indicator
         example: true
       mandChecklistInd:
-        type: string
+        type: boolean
         description: Mandatory Checklist Indicator
-        example: 'N'
+        example: true
   AdmissionResource:
     properties:
       id:

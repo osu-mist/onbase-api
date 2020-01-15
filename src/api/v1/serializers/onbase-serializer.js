@@ -47,7 +47,7 @@ const serializeAdmission = (rawRows, osuId) => {
       uacPendingInd: array[13] === 'Y',
       startSession: array[14],
       aswInd: array[15] === 'Y',
-      mandChecklistInd: array[16],
+      mandChecklistInd: array[16] === 'Y',
     };
   });
 
