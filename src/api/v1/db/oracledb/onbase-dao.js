@@ -78,8 +78,8 @@ const getAdmission = async (osuId) => {
     await connection.execute(contrib.getApplications(), { osuId });
     const lines = await getLine(connection, []);
 
-    // The 18th item of the splitted array is the error string
-    const errorString = parseErrorString(lines, 17);
+    // The 21th item of the splitted array is the error string
+    const errorString = parseErrorString(lines, 20);
     if (errorString) {
       throw createError(400, errorString);
     }
@@ -115,8 +115,8 @@ const patchAdmission = async (osuId, body) => {
     );
     const lines = await getLine(connection, []);
 
-    // The 18th item of the splitted array is the error string
-    const errorString = parseErrorString(lines, 17);
+    // The 21th item of the splitted array is the error string
+    const errorString = parseErrorString(lines, 20);
     if (errorString) {
       throw createError(400, errorString);
     }

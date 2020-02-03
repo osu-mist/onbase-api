@@ -330,10 +330,23 @@ definitions:
         type: boolean
         description: Advance standing indicator
         example: true
-      mandChecklistInd:
+      checklistMandInd:
         type: boolean
-        description: Mandatory Checklist Indicator
+        description: This field identifies whether the checklist item is mandatory or optional
         example: true
+      checklistReceiveDate:
+        type: string
+        description: The date that the checklist item was received in Oracle date format (DD-MON-YYYY HH24:MI:SS)
+        example: '20-MAY-2019 00:00:00'
+        pattern: '^\d{2}-[A-Z]{3}-\d{4} \d{2}:\d{2}:\d{2}$'
+      checklistAdmrCode:
+        type: string
+        description: This field identifies the checklist item required from the applicant
+        example: EC
+      checklistComment:
+        type: string
+        description: This field identifies a comment about the specific checklist item
+        example: Univ of North Dakota
   AdmissionResource:
     properties:
       id:
