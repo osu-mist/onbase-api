@@ -28,8 +28,8 @@ const buildErrors = (res, err) => {
 const get = async (req, res) => {
   try {
     const { osuId } = req.params;
-    const { term } = req.query;
-    const result = await onBaseDao.getAdmission(osuId, term);
+    const { applicationNumber } = req.query;
+    const result = await onBaseDao.getAdmission(osuId, applicationNumber);
     return res.send(result);
   } catch (err) {
     if (err.statusCode) {

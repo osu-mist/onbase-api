@@ -20,10 +20,10 @@ const financialAidUrl = resourcePathLink(apiBaseUrl, 'onbase/financial-aid');
  *
  * @param {object[]} rawRows Raw data rows from data source
  * @param {string} osuId OSU ID
- * @param {string} term term code
+ * @param {string} applicationNumber application number
  * @returns {object} Serialized resources data
  */
-const serializeAdmission = (rawRows, osuId, term) => {
+const serializeAdmission = (rawRows, osuId, applicationNumber) => {
   const rawAdmission = {
     osuId,
     type: admissionResourceType,
@@ -34,7 +34,7 @@ const serializeAdmission = (rawRows, osuId, term) => {
     const array = _.split(rawRow, ';');
     return {
       termCode: array[1],
-      applicationNumber: array[2],
+      applicationNumber: _.toInteger(array[2]),
       decisionCode: array[3],
       decisionDate: array[4],
       levelCode: array[5],
@@ -55,9 +55,9 @@ const serializeAdmission = (rawRows, osuId, term) => {
     };
   });
 
-  // filter the applications by term if filter is provided
-  if (term) {
-    rawAdmission.applications = _.filter(rawAdmission.applications, { termCode: term });
+  // filter the applications by applicationNumber if parameter is provided
+  if (applicationNumber) {
+    rawAdmission.applications = _.filter(rawAdmission.applications, { applicationNumber });
   }
 
   const serializerArgs = {

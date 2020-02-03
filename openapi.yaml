@@ -35,12 +35,11 @@ paths:
       operationId: getAdmissionById
       parameters:
         - $ref: '#/parameters/osuId'
-        - name: term
+        - name: applicationNumber
           in: query
           required: false
-          pattern: '^\d{6}$'
-          description: 'Term code. Example: 202001.'
-          type: string
+          description: Application number
+          type: integer
       responses:
         '200':
           description: Successful response
@@ -282,9 +281,9 @@ definitions:
         example: '201901'
         pattern: '^\d{6}$'
       applicationNumber:
-        type: string
+        type: integer
         description: Application number
-        example: '3'
+        example: 3
       statusCode:
         type: string
         description: Status code
