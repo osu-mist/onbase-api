@@ -35,11 +35,21 @@ paths:
       operationId: getAdmissionById
       parameters:
         - $ref: '#/parameters/osuId'
+        - name: term
+          in: query
+          required: false
+          pattern: '^\d{6}$'
+          description: 'Term code. Example: 202001.'
+          type: string
       responses:
         '200':
           description: Successful response
           schema:
             $ref: '#/definitions/AdmissionResult'
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/ErrorResult'
         '404':
           description: Person record for an OSU ID not found
           schema:

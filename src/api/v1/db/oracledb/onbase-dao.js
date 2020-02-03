@@ -64,10 +64,11 @@ const personNotExist = async (connection, osuId) => {
  * Return admission record of a person
  *
  * @param {string} osuId OSU ID
+ * @param {string} term term code
  * @returns {Promise<object|HttpError>} Promise object represents a serialized admission record or a
  *                                      HTTP error if error string is not null
  */
-const getAdmission = async (osuId) => {
+const getAdmission = async (osuId, term) => {
   const connection = await getConnection();
   try {
     const errorMessage = await personNotExist(connection, osuId);
@@ -84,7 +85,7 @@ const getAdmission = async (osuId) => {
       throw createError(400, errorString);
     }
 
-    const serializedAdmission = serializeAdmission(lines, osuId);
+    const serializedAdmission = serializeAdmission(lines, osuId, term);
 
     return serializedAdmission;
   } finally {
