@@ -68,7 +68,7 @@ const serializeAdmission = (rawRows, osuId, applicationNumberParam) => {
   });
 
   // filter the applications by applicationNumber if parameter is provided
-  if (applicationNumberParam !== undefined) {
+  if (!_.isUndefined(applicationNumberParam)) {
     applications = _.filter(applications, { applicationNumber: applicationNumberParam });
   }
 
