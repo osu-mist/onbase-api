@@ -20,36 +20,60 @@ const financialAidUrl = resourcePathLink(apiBaseUrl, 'onbase/financial-aid');
  *
  * @param {object[]} rawRows Raw data rows from data source
  * @param {string} osuId OSU ID
+ * @param {number} applicationNumberParam application number parameter
  * @returns {object} Serialized resources data
  */
-const serializeAdmission = (rawRows, osuId) => {
+const serializeAdmission = (rawRows, osuId, applicationNumberParam) => {
   const rawAdmission = {
     osuId,
     type: admissionResourceType,
     applications: [],
   };
 
-  rawAdmission.applications = _.map(rawRows, (rawRow) => {
+  let applications = {};
+  _.forEach(rawRows, (rawRow) => {
     const array = _.split(rawRow, ';');
-    return {
-      termCode: array[1],
-      applicationNumber: array[2],
-      decisionCode: array[3],
-      decisionDate: array[4],
-      levelCode: array[5],
-      campusCode: array[6],
-      studentTypeCode: array[7],
-      admitCode: array[8],
-      statusCode: array[9],
-      statusDate: array[10],
-      initialCompleteDate: array[11],
-      justCompletedInd: array[12] === 'Y',
-      uacPendingInd: array[13] === 'Y',
-      startSession: array[14],
-      aswInd: array[15] === 'Y',
-      mandChecklistInd: array[16] === 'Y',
+    const termCode = array[1];
+    const applicationNumber = _.toInteger(array[2]);
+    const applicationId = `${termCode}-${applicationNumber}`;
+
+    const checklistItem = {
+      admrCode: array[16],
+      mandInd: array[17] === 'Y',
+      receiveDate: array[18],
+      comment: array[19],
     };
+
+    if (!(applicationId in applications)) {
+      applications[applicationId] = {
+        termCode,
+        applicationNumber,
+        decisionCode: array[3],
+        decisionDate: array[4],
+        levelCode: array[5],
+        campusCode: array[6],
+        studentTypeCode: array[7],
+        admitCode: array[8],
+        statusCode: array[9],
+        statusDate: array[10],
+        initialCompleteDate: array[11],
+        justCompletedInd: array[12] === 'Y',
+        uacPendingInd: array[13] === 'Y',
+        startSession: array[14],
+        aswInd: array[15] === 'Y',
+        checklist: [checklistItem],
+      };
+    } else {
+      applications[applicationId].checklist.push(checklistItem);
+    }
   });
+
+  // filter the applications by applicationNumber if parameter is provided
+  if (!_.isUndefined(applicationNumberParam)) {
+    applications = _.filter(applications, { applicationNumber: applicationNumberParam });
+  }
+
+  rawAdmission.applications = _.values(applications);
 
   const serializerArgs = {
     identifierField: 'osuId',
