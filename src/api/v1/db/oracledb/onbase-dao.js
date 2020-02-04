@@ -64,7 +64,7 @@ const personNotExist = async (connection, osuId) => {
  * Return admission record of a person
  *
  * @param {string} osuId OSU ID
- * @param {string} applicationNumber application number
+ * @param {number} applicationNumber application number
  * @returns {Promise<object|HttpError>} Promise object represents a serialized admission record or a
  *                                      HTTP error if error string is not null
  */
