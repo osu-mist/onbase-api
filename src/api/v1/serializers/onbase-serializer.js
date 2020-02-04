@@ -36,6 +36,8 @@ const serializeAdmission = (rawRows, osuId, applicationNumberParam) => {
     const termCode = array[1];
     const applicationNumber = _.toInteger(array[2]);
     const applicationId = `${termCode}-${applicationNumber}`;
+    console.log(applicationId);
+
     const checklistItem = {
       admrCode: array[16],
       mandInd: array[17] === 'Y',
@@ -72,7 +74,7 @@ const serializeAdmission = (rawRows, osuId, applicationNumberParam) => {
     applications = _.filter(applications, { applicationNumber: applicationNumberParam });
   }
 
-  rawAdmission.applications = applications;
+  rawAdmission.applications = _.values(applications);
 
   const serializerArgs = {
     identifierField: 'osuId',
