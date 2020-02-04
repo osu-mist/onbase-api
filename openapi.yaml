@@ -273,6 +273,25 @@ definitions:
         type: string
         format: url
         description: Self-link of current resource
+  Checklist:
+    properties:
+      admrCode:
+        type: string
+        description: This field identifies the checklist item required from the applicant
+        example: EC
+      mandInd:
+        type: boolean
+        description: This field identifies whether the checklist item is mandatory or optional
+        example: true
+      receiveDate:
+        type: string
+        description: The date that the checklist item was received in Oracle date format (DD-MON-YYYY HH24:MI:SS)
+        example: '20-MAY-2019 00:00:00'
+        pattern: '^\d{2}-[A-Z]{3}-\d{4} \d{2}:\d{2}:\d{2}$'
+      comment:
+        type: string
+        description: This field identifies a comment about the specific checklist item
+        example: Univ of North Dakota
   Application:
     properties:
       termCode:
@@ -339,23 +358,10 @@ definitions:
         type: boolean
         description: Advance standing indicator
         example: true
-      checklistMandInd:
-        type: boolean
-        description: This field identifies whether the checklist item is mandatory or optional
-        example: true
-      checklistReceiveDate:
-        type: string
-        description: The date that the checklist item was received in Oracle date format (DD-MON-YYYY HH24:MI:SS)
-        example: '20-MAY-2019 00:00:00'
-        pattern: '^\d{2}-[A-Z]{3}-\d{4} \d{2}:\d{2}:\d{2}$'
-      checklistAdmrCode:
-        type: string
-        description: This field identifies the checklist item required from the applicant
-        example: EC
-      checklistComment:
-        type: string
-        description: This field identifies a comment about the specific checklist item
-        example: Univ of North Dakota
+      checklist:
+        type: array
+        items:
+          $ref: '#/definitions/Checklist'
   AdmissionResource:
     properties:
       id:

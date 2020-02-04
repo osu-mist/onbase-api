@@ -30,7 +30,7 @@ const serializeAdmission = (rawRows, osuId, applicationNumber) => {
     applications: [],
   };
 
-  rawAdmission.applications = _.map(rawRows, (rawRow) => {
+  const rawApplications = _.map(rawRows, (rawRow) => {
     const array = _.split(rawRow, ';');
     return {
       termCode: array[1],
@@ -55,10 +55,50 @@ const serializeAdmission = (rawRows, osuId, applicationNumber) => {
     };
   });
 
+  let applications = {};
+  _.forEach(rawApplications, (rawApplication) => {
+    const applicationId = `${rawApplication.termCode}-${rawApplication.applicationNumber}`;
+
+    if (!(applicationId in applications)) {
+      applications[applicationId] = {
+        termCode: rawApplication.termCode,
+        applicationNumber: rawApplication.applicationNumber,
+        decisionCode: rawApplication.decisionCode,
+        decisionDate: rawApplication.decisionDate,
+        levelCode: rawApplication.levelCode,
+        campusCode: rawApplication.campusCode,
+        studentTypeCode: rawApplication.studentTypeCode,
+        admitCode: rawApplication.admitCode,
+        statusCode: rawApplication.statusCode,
+        statusDate: rawApplication.statusDate,
+        initialCompleteDate: rawApplication.initialCompleteDate,
+        justCompletedInd: rawApplication.justCompletedInd,
+        uacPendingInd: rawApplication.uacPendingInd,
+        startSession: rawApplication.startSession,
+        aswInd: rawApplication.aswInd,
+        checklist: [{
+          admrCode: rawApplication.checklistAdmrCode,
+          mandInd: rawApplication.checklistMandInd,
+          receiveDate: rawApplication.checklistReceiveDate,
+          comment: rawApplication.checklistComment,
+        }],
+      };
+    } else {
+      applications[applicationId].checklist.push({
+        admrCode: rawApplication.checklistAdmrCode,
+        mandInd: rawApplication.checklistMandInd,
+        receiveDate: rawApplication.checklistReceiveDate,
+        comment: rawApplication.checklistComment,
+      });
+    }
+  });
+
   // filter the applications by applicationNumber if parameter is provided
   if (applicationNumber !== undefined) {
-    rawAdmission.applications = _.filter(rawAdmission.applications, { applicationNumber });
+    applications = _.filter(applications, { applicationNumber });
   }
+
+  rawAdmission.applications = applications;
 
   const serializerArgs = {
     identifierField: 'osuId',
