@@ -38,10 +38,10 @@ const serializeAdmission = (rawRows, osuId, applicationNumberParam) => {
     const applicationId = `${termCode}-${applicationNumber}`;
 
     const checklistItem = {
-      admrCode: array[16],
-      mandInd: array[17] === 'Y',
-      receiveDate: array[18],
-      comment: array[19],
+      admrCode: array[17],
+      mandInd: array[18] === 'Y',
+      receiveDate: array[19],
+      comment: array[20],
     };
 
     if (!(applicationId in applications)) {
@@ -61,6 +61,7 @@ const serializeAdmission = (rawRows, osuId, applicationNumberParam) => {
         uacPendingInd: array[13] === 'Y',
         startSession: array[14],
         aswInd: array[15] === 'Y',
+        currentDocMandInd: array[16] === 'Y',
         checklist: [checklistItem],
       };
     } else {
