@@ -172,6 +172,7 @@ parameters:
       type: object
       properties:
         data:
+          type: object
           properties:
             id:
               type: string
@@ -180,6 +181,7 @@ parameters:
             type:
               $ref: '#/definitions/AdmissionType'
             attributes:
+              type: object
               properties:
                 onBaseDocumentType:
                   type: string
@@ -218,6 +220,7 @@ parameters:
       type: object
       properties:
         data:
+          type: object
           properties:
             id:
               type: string
@@ -226,6 +229,7 @@ parameters:
             type:
               $ref: '#/definitions/FinancialAidType'
             attributes:
+              type: object
               properties:
                 onBaseDocumentType:
                   type: string
