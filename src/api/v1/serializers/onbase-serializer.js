@@ -160,16 +160,7 @@ const serializeHolds = (rawRows, osuId, codes) => {
       reason: array[5],
       organizationCode: array[6] || null,
       organizationDescription: array[7] || null,
-      processesAffected: _.compact([
-        array[8],
-        array[9],
-        array[10],
-        array[11],
-        array[12],
-        array[13],
-        array[14],
-        array[15],
-      ]),
+      processesAffected: _.compact(array.slice(8, 16)),
       releasedInd: array[16] === 'Y',
     };
   });
