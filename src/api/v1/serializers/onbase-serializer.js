@@ -158,8 +158,8 @@ const serializeHolds = (rawRows, osuId, codes) => {
       fromDate: array[3],
       toDate: array[4],
       reason: array[5],
-      organizationCode: array[6],
-      organizationDescription: array[7],
+      organizationCode: array[6] || null,
+      organizationDescription: array[7] || null,
       processesAffected: _.compact([
         array[8],
         array[9],
