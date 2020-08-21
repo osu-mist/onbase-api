@@ -4,7 +4,11 @@ import { BIND_OUT, NUMBER, STRING } from 'oracledb';
 
 import { getConnection } from './connection';
 import { contrib } from './contrib/contrib';
-import { serializeAdmission, serializeFinancialAid } from '../../serializers/onbase-serializer';
+import {
+  serializeAdmission,
+  serializeFinancialAid,
+  serializeHolds,
+} from '../../serializers/onbase-serializer';
 
 /**
  * A Helper function to parse the error string
@@ -195,9 +199,41 @@ const patchFinancialAid = async (osuId, body) => {
   }
 };
 
+/**
+ * Return holds record of a person
+ *
+ * @param {string} osuId OSU ID
+ * @param {string} codes hold codes
+ * @returns {Promise<object|HttpError>} Promise object represents a serialized holds record
+ *                                      or a HTTP error if error string is not null
+ */
+const getHolds = async (osuId, codes) => {
+  const connection = await getConnection();
+  try {
+    const errorMessage = await personNotExist(connection, osuId);
+    if (errorMessage) {
+      throw createError(404, errorMessage);
+    }
+
+    await connection.execute(contrib.getHolds(), { osuId });
+    const lines = await getLine(connection, []);
+
+    // The 18th item of the splitted array is the error string
+    const errorString = parseErrorString(lines, 17);
+    if (errorString) {
+      throw createError(400, errorString);
+    }
+
+    return serializeHolds(lines, osuId, codes);
+  } finally {
+    connection.close();
+  }
+};
+
 export {
   getAdmission,
   patchAdmission,
   getFinancialAid,
   patchFinancialAid,
+  getHolds,
 };

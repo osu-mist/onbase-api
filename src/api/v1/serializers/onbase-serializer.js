@@ -15,6 +15,11 @@ const financialAidResourceType = financialAidResourceProp.type.enum[0];
 const financialAidResourceKeys = _.keys(financialAidResourceProp.attributes.properties);
 const financialAidUrl = resourcePathLink(apiBaseUrl, 'onbase/financial-aid');
 
+const holdsResourceProp = openapi.definitions.HoldsResource.properties;
+const holdsResourceType = holdsResourceProp.type.enum[0];
+const holdsResourceKeys = _.keys(holdsResourceProp.attributes.properties);
+const holdsUrl = resourcePathLink(apiBaseUrl, 'onbase/holds');
+
 /**
  * A function to serialize raw admission data
  *
@@ -130,4 +135,63 @@ const serializeFinancialAid = (rawRows, osuId) => {
   ).serialize(rawFinancialAid);
 };
 
-export { serializeAdmission, serializeFinancialAid };
+/**
+ * A function to serialize raw holds data
+ *
+ * @param {object[]} rawRows Raw data rows from data source
+ * @param {string} osuId OSU ID
+ * @param {string} codes Hold codes
+ * @returns {object} Serialized resources data
+ */
+const serializeHolds = (rawRows, osuId, codes) => {
+  const rawHolds = {
+    osuId,
+    type: holdsResourceType,
+    holds: [],
+  };
+
+  const holds = _.map(rawRows, (rawRow) => {
+    const array = _.split(rawRow, ';');
+    return {
+      code: array[1],
+      description: array[2],
+      fromDate: array[3],
+      toDate: array[4],
+      reason: array[5],
+      organizationCode: array[6] || null,
+      organizationDescription: array[7] || null,
+      processesAffected: _.compact(array.slice(8, 16)),
+      releasedInd: array[16] === 'Y',
+    };
+  });
+
+  if (codes) {
+    _.each(holds, (hold) => {
+      if (_.includes(codes, hold.code)) {
+        rawHolds.holds.push(hold);
+      }
+    });
+  } else {
+    rawHolds.holds = holds;
+  }
+
+  const serializerArgs = {
+    identifierField: 'osuId',
+    resourceKeys: holdsResourceKeys,
+    resourceUrl: holdsUrl,
+    topLevelSelfLink: resourcePathLink(holdsUrl, osuId),
+    enableDataLinks: true,
+    resourceType: holdsResourceType,
+  };
+
+  return new JsonApiSerializer(
+    holdsResourceType,
+    serializerOptions(serializerArgs),
+  ).serialize(rawHolds);
+};
+
+export {
+  serializeAdmission,
+  serializeFinancialAid,
+  serializeHolds,
+};
