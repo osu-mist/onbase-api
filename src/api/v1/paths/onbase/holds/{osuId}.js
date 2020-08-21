@@ -9,8 +9,7 @@ import { getHolds } from '../../../db/oracledb/onbase-dao';
  */
 const get = async (req, res) => {
   try {
-    const { osuId } = req.params;
-    const { codes } = req.query;
+    const { params: { osuId }, query: { codes } } = req;
     const result = await getHolds(osuId, codes);
     res.send(result);
   } catch (err) {

@@ -178,6 +178,10 @@ paths:
           description: Bad request
           schema:
             $ref: '#/definitions/ErrorResult'
+        '404':
+          description: Person record for an OSU ID not found
+          schema:
+            $ref: '#/definitions/ErrorResult'
         '500':
           description: Internal Server Error
           schema:
@@ -511,7 +515,7 @@ definitions:
                   example: REGS
                 organizationDescription:
                   type: string
-                  description: Organization code of the hold.
+                  description: Organization description of the hold.
                   example: Registration Office
                 releasedInd:
                   type: boolean
