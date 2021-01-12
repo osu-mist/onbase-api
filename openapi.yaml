@@ -186,6 +186,56 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ErrorResult'
+  /onbase/documents:
+    post:
+      tags:
+        - onBase
+        - documents
+      description: Insert document data
+      operationId: postDocument
+      parameters:
+        - in: body
+          name: postDocumentBody
+          required: true
+          schema:
+            properties:
+              data:
+                type: object
+                properties:
+                  type:
+                    $ref: '#/definitions/DocumentsType'
+                  attributes:
+                    $ref: '#/definitions/PostDocumentAttributes'
+                    required:
+                      - documentId
+                      - fieldName
+                      - fieldValue
+                      - indexKey
+                      - docTypeNumber
+                      - instance
+                    additionalProperties: false
+                required:
+                  - type
+                  - attributes
+            required:
+              - data
+      responses:
+        '201':
+          description: Successful created a document data
+          schema:
+            $ref: '#/definitions/DocumentResult'
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/ErrorResult'
+        '409':
+          description: The request body resource object's type was invalid
+          schema:
+            $ref: '#/definitions/ErrorResult'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResult'
 parameters:
   osuId:
     name: osuId
@@ -523,6 +573,67 @@ definitions:
                   example: true
       links:
         $ref: '#/definitions/SelfLink'
+  DocumentsType:
+    type: string
+    enum: [documents]
+  PostDocumentAttributes:
+    properties:
+      documentId:
+        type: string
+        description: OnBase document ID
+        example: '123456'
+        pattern: ^\d+$
+      fieldName:
+        type: string
+        description: Field name in document
+        example: test field
+      fieldValue:
+        type: string
+        description: Value of field in document
+        example: test 123
+      indexKey:
+        type: string
+        description: Index key keyword value for document in OnBase
+        example: '123456789_1234'
+      docTypeNumber:
+        type: integer
+        description: OnBase document type number
+        example: 123
+      instance:
+        type: string
+        description: Identifies which OnBase instance
+        example: 'UT2'
+  DocumentResult:
+    properties:
+      links:
+        $ref: '#/definitions/SelfLink'
+      data:
+        $ref: '#/definitions/DocumentResource'
+  DocumentResource:
+    properties:
+      id:
+        type: string
+        description: Unique internal ID
+        pattern: '^\d+$-\d+'
+      type:
+        $ref: '#/definitions/DocumentsType'
+      attributes:
+        allOf:
+          - $ref: '#/definitions/PostDocumentAttributes'
+          - properties:
+              seqNo:
+                type: integer
+                description: Sequence number of repeating field
+                example: 1
+              activityDate:
+                type: string
+                description: The date that this record was last changed in Oracle date format (DD-MON-YYYY HH24:MI:SS)
+                example: '12-Jan-2021 00:00:00'
+                pattern: '^\d{2}-[A-Z]{3}-\d{4} \d{2}:\d{2}:\d{2}$'
+              userId:
+                type: string
+                description: User who made the last change
+                example: ONBASE
   OsuId:
     properties:
       id:
