@@ -222,13 +222,9 @@ paths:
         '201':
           description: Successful created a document data
           schema:
-            $ref: '#/definitions/DocumentResult'
+            $ref: '#/definitions/DocumentsResult'
         '400':
           description: Bad request
-          schema:
-            $ref: '#/definitions/ErrorResult'
-        '409':
-          description: The request body resource object's type was invalid
           schema:
             $ref: '#/definitions/ErrorResult'
         '500':
@@ -602,13 +598,13 @@ definitions:
         type: string
         description: Identifies which OnBase instance
         example: 'UT2'
-  DocumentResult:
+  DocumentsResult:
     properties:
       links:
         $ref: '#/definitions/SelfLink'
       data:
-        $ref: '#/definitions/DocumentResource'
-  DocumentResource:
+        $ref: '#/definitions/DocumentsResource'
+  DocumentsResource:
     properties:
       id:
         type: string

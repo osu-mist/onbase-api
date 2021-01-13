@@ -246,9 +246,10 @@ const postDocument = async (body) => {
       contrib.createDocuments(), attributes,
     );
     const lines = await getLine(connection, []);
+    console.log(lines);
 
-    // The 9th item of the splitted array is the error string
-    const errorString = parseErrorString(lines, 8);
+    // The 10th item of the splitted array is the error string
+    const errorString = parseErrorString(lines, 9);
     if (errorString) {
       throw createError(400, errorString);
     }
