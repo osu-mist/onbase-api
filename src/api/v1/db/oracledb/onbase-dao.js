@@ -8,6 +8,7 @@ import {
   serializeAdmission,
   serializeFinancialAid,
   serializeHolds,
+  serializeDocuments,
 } from '../../serializers/onbase-serializer';
 
 /**
@@ -230,10 +231,40 @@ const getHolds = async (osuId, codes) => {
   }
 };
 
+/**
+ * Create OnBase document record
+ *
+ * @param {object} body request body
+ * @returns {Promise<object|HttpError>} Promise object represents a serialized documents record
+ *                                      or a HTTP error if error string is not null
+ */
+const postDocument = async (body) => {
+  const { attributes } = body.data;
+  const connection = await getConnection();
+  try {
+    await connection.execute(
+      contrib.createDocuments(), attributes,
+    );
+    const lines = await getLine(connection, []);
+
+    // The 11th item of the splitted array is the error string
+    const errorString = parseErrorString(lines, 10);
+    if (errorString === 'Duplicate Record') {
+      throw createError(409, errorString);
+    } else if (errorString) {
+      throw createError(400, errorString);
+    }
+    return serializeDocuments(lines);
+  } finally {
+    connection.close();
+  }
+};
+
 export {
   getAdmission,
   patchAdmission,
   getFinancialAid,
   patchFinancialAid,
   getHolds,
+  postDocument,
 };
