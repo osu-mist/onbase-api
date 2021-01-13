@@ -227,7 +227,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResult'
         '409':
-          description: Bad request
+          description: Conflict
           schema:
             $ref: '#/definitions/ErrorResult'
         '500':
