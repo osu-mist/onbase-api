@@ -251,6 +251,8 @@ const postDocument = async (body) => {
     const errorString = parseErrorString(lines, 10);
     if (errorString === 'Duplicate Record') {
       throw createError(409, errorString);
+    } else if (errorString) {
+      throw createError(400, errorString);
     }
     return serializeDocuments(lines);
   } finally {

@@ -205,12 +205,6 @@ paths:
                     $ref: '#/definitions/DocumentsType'
                   attributes:
                     $ref: '#/definitions/PostDocumentAttributes'
-                    required:
-                      - documentId
-                      - fieldName
-                      - indexKey
-                      - docTypeNumber
-                      - instance
                     additionalProperties: false
                 required:
                   - type
@@ -601,6 +595,12 @@ definitions:
         type: string
         description: Identifies which OnBase instance
         example: 'UT2'
+    required:
+      - documentId
+      - fieldName
+      - indexKey
+      - docTypeNumber
+      - instance
   DocumentsResult:
     properties:
       links:
