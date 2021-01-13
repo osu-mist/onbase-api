@@ -20,6 +20,11 @@ const holdsResourceType = holdsResourceProp.type.enum[0];
 const holdsResourceKeys = _.keys(holdsResourceProp.attributes.properties);
 const holdsUrl = resourcePathLink(apiBaseUrl, 'onbase/holds');
 
+const documentsResourceProp = openapi.definitions.DocumentsResource.properties;
+const documentsResourceType = documentsResourceProp.type.enum[0];
+const documentsResourceKeys = _.keys(documentsResourceProp.attributes.properties);
+const documentsUrl = resourcePathLink(apiBaseUrl, 'onbase/documents');
+
 /**
  * A function to serialize raw admission data
  *
@@ -190,8 +195,47 @@ const serializeHolds = (rawRows, osuId, codes) => {
   ).serialize(rawHolds);
 };
 
+/**
+ * A function to serialize raw documents data
+ *
+ * @param {object[]} rawRows Raw data rows from data source
+ * @returns {object} Serialized resources data
+ */
+const serializeDocuments = (rawRows) => {
+  const array = _.split(rawRows[0], ';');
+  const documentInternalId = `${array[0]}-${array[1]}`;
+
+  const rawDocuments = {
+    documentInternalId,
+    type: documentsResourceType,
+    documentId: array[0],
+    seqNo: array[1],
+    fieldName: array[2],
+    fieldValue: array[3],
+    indexKey: array[4],
+    docTypeNumber: array[5],
+    activityDate: array[6],
+    userId: array[7],
+  };
+
+  const serializerArgs = {
+    identifierField: 'documentInternalId',
+    resourceKeys: documentsResourceKeys,
+    resourceUrl: documentsUrl,
+    topLevelSelfLink: resourcePathLink(documentsUrl, documentInternalId),
+    enableDataLinks: true,
+    resourceType: documentsResourceType,
+  };
+
+  return new JsonApiSerializer(
+    documentsResourceType,
+    serializerOptions(serializerArgs),
+  ).serialize(rawDocuments);
+};
+
 export {
   serializeAdmission,
   serializeFinancialAid,
   serializeHolds,
+  serializeDocuments,
 };

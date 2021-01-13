@@ -209,7 +209,6 @@ paths:
                     required:
                       - documentId
                       - fieldName
-                      - fieldValue
                       - indexKey
                       - docTypeNumber
                       - instance
@@ -613,7 +612,7 @@ definitions:
     properties:
       id:
         type: string
-        description: Unique internal ID
+        description: Unique document internal ID
         pattern: '^\d+$-\d+'
       type:
         $ref: '#/definitions/DocumentsType'
