@@ -246,12 +246,11 @@ const postDocument = async (body) => {
       contrib.createDocuments(), attributes,
     );
     const lines = await getLine(connection, []);
-    console.log(lines);
 
-    // The 10th item of the splitted array is the error string
-    const errorString = parseErrorString(lines, 9);
-    if (errorString) {
-      throw createError(400, errorString);
+    // The 11th item of the splitted array is the error string
+    const errorString = parseErrorString(lines, 10);
+    if (errorString === 'Duplicate Record') {
+      throw createError(409, errorString);
     }
     return serializeDocuments(lines);
   } finally {

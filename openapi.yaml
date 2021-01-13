@@ -81,8 +81,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResult'
         '409':
-          description: |
-            Conflict error, either type is incorrect or the path ID and body ID are not matched
+          description: Conflict error
           schema:
             $ref: '#/definitions/ErrorResult'
         '500':
@@ -224,6 +223,10 @@ paths:
           schema:
             $ref: '#/definitions/DocumentsResult'
         '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/ErrorResult'
+        '409':
           description: Bad request
           schema:
             $ref: '#/definitions/ErrorResult'
@@ -609,7 +612,6 @@ definitions:
       id:
         type: string
         description: Unique document internal ID
-        pattern: '^\d+$-\d+'
       type:
         $ref: '#/definitions/DocumentsType'
       attributes:

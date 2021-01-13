@@ -209,19 +209,20 @@ const serializeHolds = (rawRows, osuId, codes) => {
  */
 const serializeDocuments = (rawRows) => {
   const array = _.split(rawRows[0], ';');
-  const documentInternalId = `${array[0]}-${array[1]}-${array[2]}`;
+  const documentInternalId = array[0];
 
   const rawDocuments = {
     documentInternalId,
     type: documentsResourceType,
-    documentId: array[0],
-    seqNo: parseFloat(array[1]),
-    fieldName: array[2],
-    fieldValue: array[3],
-    indexKey: array[4],
-    docTypeNumber: parseFloat(array[5]),
-    activityDate: array[6],
-    userId: array[7],
+    documentId: array[1],
+    seqNo: parseFloat(array[2]),
+    fieldName: array[3],
+    fieldValue: array[4],
+    indexKey: array[5],
+    docTypeNumber: parseFloat(array[6]),
+    instance: array[7],
+    activityDate: array[8],
+    userId: array[9],
   };
 
   const serializerArgs = {

@@ -1,4 +1,4 @@
-import { errorHandler } from 'errors/errors';
+import { errorBuilder, errorHandler } from 'errors/errors';
 
 import { postDocument } from '../../db/oracledb/onbase-dao';
 
@@ -11,9 +11,12 @@ const post = async (req, res) => {
   try {
     const { body } = req;
     const result = await postDocument(body);
-    res.send(result);
+    return res.send(result, 201);
   } catch (err) {
-    errorHandler(res, err);
+    if (err.statusCode === 409) {
+      return errorBuilder(res, err.statusCode, 'Record with the same document ID and filed name has existed.');
+    }
+    return errorHandler(res, err);
   }
 };
 
