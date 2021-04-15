@@ -2,7 +2,6 @@ import _ from 'lodash';
 
 import { resourcePathLink, paramsLink } from 'utils/uri-builder';
 
-
 /**
  * Helper function to generate pagination params
  *
