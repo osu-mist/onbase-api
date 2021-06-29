@@ -595,6 +595,10 @@ definitions:
         type: string
         description: Identifies which OnBase instance
         example: 'UT2'
+      version:
+        type: integer
+        description: OnBase document version
+        example: 0
     required:
       - documentId
       - fieldName
