@@ -221,8 +221,9 @@ const serializeDocuments = (rawRows) => {
     indexKey: array[5],
     docTypeNumber: parseFloat(array[6]),
     instance: array[7],
-    activityDate: array[8],
-    userId: array[9],
+    version: parseFloat(array[8]),
+    activityDate: array[9],
+    userId: array[10],
   };
 
   const serializerArgs = {

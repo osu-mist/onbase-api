@@ -247,8 +247,8 @@ const postDocument = async (body) => {
     );
     const lines = await getLine(connection, []);
 
-    // The 11th item of the splitted array is the error string
-    const errorString = parseErrorString(lines, 10);
+    // The 12th item of the splitted array is the error string
+    const errorString = parseErrorString(lines, 11);
     if (errorString === 'Duplicate Record') {
       throw createError(409, errorString);
     } else if (errorString) {
