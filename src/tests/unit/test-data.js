@@ -21,12 +21,12 @@ const outBindsRecursive = {
 /*
  * The 16th element of 'line' returned by execute contains an error
  * length of 17 makes an array 0-16
- * _.range() creates a string '0;1;...15;16'
+ * _.range() creates a string '0§1§...15§16'
  */
 const errorLineLength = 17;
 const outBindsError = {
   outBinds: {
-    lines: _.range(errorLineLength).join(';'),
+    lines: _.range(errorLineLength).join('§'),
     status: 1,
   },
 };
@@ -41,8 +41,8 @@ const admissionPatchBody = {
 const invalidAdmissionPatchBody = {};
 
 const rawAdmission = [
-  '201901;3;D;20-MAY-2019;AT;20-MAY-2019;02;DSC;T;RA;20-MAY-2019;true;true;SOP8;true',
-  '201901;3;D;20-MAY-2019;AT;20-MAY-2019;02;DSC;T;RA;20-MAY-2019;true;true;SOP8;true',
+  '201901§3§D§20-MAY-2019§AT§20-MAY-2019§02§DSC§T§RA;20-MAY-2019§true§true§SOP8§true',
+  '201901§3§D§20-MAY-2019§AT§20-MAY-2019§02§DSC§T§RA;20-MAY-2019§true§true§SOP8§true',
 ];
 
 export {

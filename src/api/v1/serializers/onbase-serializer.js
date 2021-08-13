@@ -48,7 +48,7 @@ const serializeAdmission = (rawRows, osuId, applicationNumberParam) => {
 
   let applications = {};
   _.forEach(rawRows, (rawRow) => {
-    const array = _.split(rawRow, ';');
+    const array = _.split(rawRow, '§');
     const termCode = array[1];
     const applicationNumber = _.toInteger(array[2]);
     const applicationId = `${termCode}-${applicationNumber}`;
@@ -122,7 +122,7 @@ const serializeFinancialAid = (rawRows, osuId) => {
   };
 
   rawFinancialAid.trackingRequirements = _.map(rawRows, (rawRow) => {
-    const array = _.split(rawRow, ';');
+    const array = _.split(rawRow, '§');
     return {
       financialAidYear: array[1],
       trackingRequirement: array[2],
@@ -162,7 +162,7 @@ const serializeHolds = (rawRows, osuId, codes) => {
   };
 
   const holds = _.map(rawRows, (rawRow) => {
-    const array = _.split(rawRow, ';');
+    const array = _.split(rawRow, '§');
     return {
       code: array[1],
       description: array[2],
@@ -208,7 +208,7 @@ const serializeHolds = (rawRows, osuId, codes) => {
  * @returns {object} Serialized resources data
  */
 const serializeDocuments = (rawRows) => {
-  const array = _.split(rawRows[0], ';');
+  const array = _.split(rawRows[0], '§');
   const documentInternalId = array[0];
 
   const rawDocuments = {
