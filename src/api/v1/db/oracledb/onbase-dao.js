@@ -20,7 +20,7 @@ import {
  */
 const parseErrorString = (lines, errorPosition) => {
   if (lines.length >= 1) {
-    return _.split(lines[0], ';')[errorPosition];
+    return _.split(lines[0], '§')[errorPosition];
   }
   return undefined;
 };
